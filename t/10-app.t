@@ -7,9 +7,10 @@ use ZapziTestDatabase;
 
 use App::Zapzi;
 
+test_init();
+
 my ($test_dir, $app) = ZapziTestDatabase::get_test_app();
 
-test_init();
 test_list();
 test_list_folders();
 test_make_folder();
@@ -18,6 +19,7 @@ test_show();
 test_add();
 test_delete_article();
 test_publish();
+test_help_version();
 
 done_testing();
 
@@ -25,13 +27,13 @@ sub get_test_app
 {
     my $dir = $app->zapzi_dir;
 
-    my $clean_app = App::Zapzi->new(zapzi_dir => $dir);
+    my $clean_app = App::Zapzi->new(zapzi_dir => $dir, test_database => 1);
     return $clean_app;
 }
 
 sub test_init
 {
-    ZapziTestDatabase::test_init($test_dir, $app);
+    ZapziTestDatabase::test_init();
 }
 
 sub test_list
@@ -167,4 +169,17 @@ sub test_publish
                  qr/does not exist/,
                  'publish error' );
     ok( $app->run, 'publish error run' );
+}
+
+sub test_help_version
+{
+    my $app = get_test_app();
+
+    stdout_like( sub { $app->process_args(qw(help)) },
+                 qr/Shows this help text/s,
+                 'help' );
+
+    stdout_like( sub { $app->process_args(qw(version)) },
+                 qr/App::Zapzi .* and Perl/s,
+                 'version' );
 }

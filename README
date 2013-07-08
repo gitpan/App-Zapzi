@@ -3,7 +3,7 @@ NAME
     later
 
 VERSION
-    version 0.001
+    version 0.002
 
 SYNOPSIS
       $ zapzi init
@@ -142,8 +142,11 @@ NAME
     ZAAP-zi in Cantonese.
 
 USAGE
-      $ zapzi help|h
+      $ zapzi help | h
         Shows this help text
+
+      $ zapzi version | v
+        Show version information
 
       $ zapzi init [--force]
         Initialises new zapzi database. Will not create a new database 

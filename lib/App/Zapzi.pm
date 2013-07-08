@@ -5,7 +5,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.001'; # VERSION
+our $VERSION = '0.002'; # VERSION
 
 binmode(STDOUT, ":encoding(UTF-8)");
 
@@ -71,6 +71,13 @@ has database =>
 );
 
 
+has test_database =>
+(
+    is => 'ro',
+    default => 0
+);
+
+
 sub process_args
 {
     my $self = shift;
@@ -79,6 +86,7 @@ sub process_args
     my @specs =
     (
         Switch("help|h"),
+        Switch("version|v"),
         Switch("init"),
         Switch("add"),
         Switch("list|ls"),
@@ -95,17 +103,18 @@ sub process_args
 
     my $options = Getopt::Lucid->getopt(\@specs, \@args)->validate;
 
-    $self->force = $options->get_force;
-    $self->folder = $options->get_folder // $self->folder;
+    $self->force($options->get_force);
+    $self->folder($options->get_folder // $self->folder);
 
     $self->help if $options->get_help;
+    $self->version if $options->get_version;
     $self->init if $options->get_init;
 
     # For any further operations we need a database
-    if (! -r $self->database->database_file)
+    if (! -r $self->database->database_file && ! $self->test_database)
     {
         print "Zapzi database does not exist; did you run 'zapzi init'?\n";
-        $self->run = 1;
+        $self->run(1);
         return;
     }
 
@@ -113,7 +122,7 @@ sub process_args
     {
         if (! $self->validate_folder($self->folder))
         {
-            $self->run = 1;
+            $self->run(1);
             return;
         }
     }
@@ -140,19 +149,19 @@ sub init
     if (! $dir || $dir eq '')
     {
         print "Zapzi directory not supplied\n";
-        $self->run = 1;
+        $self->run(1);
     }
     elsif (-d $dir && ! $self->force)
     {
         print "Zapzi directory $dir already exists\n";
         print "To force recreation, run with the --force option\n";
-        $self->run = 1;
+        $self->run(1);
     }
     else
     {
         $self->database->init;
         print "Created Zapzi directory $dir\n";
-        $self->run = 0;
+        $self->run(0);
     }
 }
 
@@ -164,7 +173,7 @@ sub validate_folder
     if (! App::Zapzi::Articles::get_folder($self->folder))
     {
         printf("Folder '%s' does not exist\n", $self->folder);
-        $self->run = 1;
+        $self->run(1);
         return;
     }
     else
@@ -178,7 +187,7 @@ sub list
 {
     my $self = shift;
     App::Zapzi::Articles::list_articles($self->folder);
-    $self->run = 0;
+    $self->run(0);
 }
 
 
@@ -186,7 +195,7 @@ sub list_folders
 {
     my $self = shift;
     App::Zapzi::Folders::list_folders();
-    $self->run = 0;
+    $self->run(0);
 }
 
 
@@ -198,11 +207,11 @@ sub make_folder
     if (! @args)
     {
         print "Need to provide folder names to create\n";
-        $self->run = 1;
+        $self->run(1);
         return;
     }
 
-    $self->run = 0;
+    $self->run(0);
     for (@args)
     {
         my $folder = $_;
@@ -227,11 +236,11 @@ sub delete_folder
     if (! @args)
     {
         print "Need to provide folder names to delete\n";
-        $self->run = 1;
+        $self->run(1);
         return;
     }
 
-    $self->run = 0;
+    $self->run(0);
     for (@args)
     {
         my $folder = $_;
@@ -260,11 +269,11 @@ sub delete_article
     if (! @args)
     {
         print "Need to provide article IDs\n";
-        $self->run = 1;
+        $self->run(1);
         return;
     }
 
-    $self->run = 0;
+    $self->run(0);
     for (@args)
     {
         my $id = $_;
@@ -283,7 +292,7 @@ sub delete_article
         else
         {
             print "Could not get article $id\n";
-            $self->run = 1;
+            $self->run(1);
         }
     }
 }
@@ -297,11 +306,11 @@ sub add
     if (! @args)
     {
         print "Need to provide articles names to add\n";
-        $self->run = 1;
+        $self->run(1);
         return;
     }
 
-    $self->run = 0;
+    $self->run(0);
     for (@args)
     {
         my $source = $_;
@@ -310,7 +319,7 @@ sub add
         if (! $f->fetch)
         {
             print "Could not get article: ", $f->error, "\n\n";
-            $self->run = 1;
+            $self->run(1);
             next;
         }
 
@@ -318,7 +327,7 @@ sub add
         if (! $tx->to_readable)
         {
             print "Could not transform article\n\n";
-            $self->run = 1;
+            $self->run(1);
             next;
         }
 
@@ -341,11 +350,11 @@ sub show
     if (! @args)
     {
         print "Need to provide article IDs\n";
-        $self->run = 1;
+        $self->run(1);
         return;
     }
 
-    $self->run = 0;
+    $self->run(0);
     for (@args)
     {
         my $art_rs = App::Zapzi::Articles::get_article($_);
@@ -356,7 +365,7 @@ sub show
         else
         {
             print "Could not get article $_\n\n";
-            $self->run = 1;
+            $self->run(1);
         }
     }
 }
@@ -365,7 +374,7 @@ sub show
 sub publish
 {
     my $self = shift;
-    $self->run = 0;
+    $self->run(0);
 
     my $articles = App::Zapzi::Articles::get_articles($self->folder);
     my $count  = $articles->count;
@@ -373,7 +382,7 @@ sub publish
     if ($count == 0)
     {
         print "No articles in '", $self->folder, "' to publish\n";
-        $self->run = 1;
+        $self->run(1);
         return;
     }
 
@@ -384,7 +393,7 @@ sub publish
     if (! $pub->publish())
     {
         print "Failed to publish ebook\n";
-        $self->run = 1;
+        $self->run(1);
         return;
     }
 
@@ -399,6 +408,9 @@ sub help
     print << 'EOF';
   $ zapzi help|h
     Shows this help text
+
+  $ zapzi version|v
+    Show version information
 
   $ zapzi init [--force]
     Initialises new zapzi database. Will not create a new database 
@@ -429,7 +441,20 @@ sub help
     Publishes articles in FOLDER to an eBook.
 EOF
 
-    $self->run = 0;
+    $self->run(0);
+}
+
+
+sub version
+{
+    my $self = shift;
+
+    my $v = "dev";
+    no strict 'vars'; ## no critic - $VERSION does not exist in dev
+    $v = "$VERSION" if defined $VERSION;
+
+    print "App::Zapzi $v and Perl $]\n";
+    $self->run(0);
 }
 
 1;
@@ -444,7 +469,7 @@ App::Zapzi - store articles and publish them to read later
 
 =head1 VERSION
 
-version 0.001
+version 0.002
 
 =head1 DESCRIPTION
 
@@ -478,6 +503,10 @@ The folder where Zapzi published eBook files are stored.
 =head2 database
 
 The instance of App:Zapzi::Database used by the application.
+
+=head2 test_database
+
+If set, use an in-memory database. Used to speed up testing only.
 
 =head1 METHODS
 
@@ -540,6 +569,10 @@ Publish a folder of articles to an eBook
 =head2 help
 
 Displays help text.
+
+=head2 version
+
+Displays version information.
 
 =head1 AUTHOR
 

@@ -6,12 +6,13 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.001'; # VERSION
+our $VERSION = '0.002'; # VERSION
 
 use Carp;
 use Encode;
 use HTML::ExtractMain;
 use HTML::Element;
+use HTML::Entities ();
 use Text::Markdown;
 use App::Zapzi;
 use App::Zapzi::FetchArticle;
@@ -25,10 +26,10 @@ has raw_article => (is => 'ro', isa => sub
                     });
 
 
-has readable_text => (is => 'ro', default => '');
+has readable_text => (is => 'rwp', default => '');
 
 
-has title => (is => 'ro', default => '');
+has title => (is => 'rwp', default => '');
 
 
 sub to_readable
@@ -59,14 +60,17 @@ sub _html_to_readable
     # Get the title from the HTML raw text - a regexp is not ideal and
     # we'd be better off using HTML::Tree but that means we'd have to
     # call it twice, once here and once in HTML::ExtractMain.
+    my $title;
     if ($raw_html =~ m/<title>(\w[^>]+)<\/title>/si)
     {
-        $self->title = $1;
+        $title = HTML::Entities::decode($1);
     }
     else
     {
-        $self->title = $self->raw_article->source;
+        $title = $self->raw_article->source;
     }
+
+    $self->_set_title($title);
 
     my $tree = HTML::ExtractMain::extract_main_html($raw_html,
                                                     output_type => 'tree' );
@@ -79,7 +83,7 @@ sub _html_to_readable
         $element->delete;
     }
 
-    $self->readable_text = $tree->as_HTML;
+    $self->_set_readable_text($tree->as_HTML);
     return 1;
 }
 
@@ -90,12 +94,12 @@ sub _text_to_readable
     my $raw_html = Encode::decode_utf8($self->raw_article->text);
 
     # We take the first line as the title, or up to 80 bytes
-    $self->title = (split /\n/, $raw_html)[0];
-    $self->title = substr($self->title, 0, 80);
+    $self->_set_title( (split /\n/, $raw_html)[0] );
+    $self->_set_title(substr($self->title, 0, 80));
 
     # We push plain text through Markdown to convert URLs to links etc
     my $md = Text::Markdown->new;
-    $self->readable_text = $md->markdown($raw_html);
+    $self->_set_readable_text($md->markdown($raw_html));
 
     return 1;
 }
@@ -112,7 +116,7 @@ App::Zapzi::Transform - routines to transform Zapzi articles to readble HTML
 
 =head1 VERSION
 
-version 0.001
+version 0.002
 
 =head1 DESCRIPTION
 

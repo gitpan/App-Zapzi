@@ -5,7 +5,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.001'; # VERSION
+our $VERSION = '0.002'; # VERSION
 
 use base 'DBIx::Class::Schema';
 
@@ -24,7 +24,7 @@ App::Zapzi::Database::Schema - database schema for zapzi
 
 =head1 VERSION
 
-version 0.001
+version 0.002
 
 =head1 AUTHOR
 

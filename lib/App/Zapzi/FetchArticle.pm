@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.001'; # VERSION
+our $VERSION = '0.002'; # VERSION
 
 use Carp;
 use App::Zapzi;
@@ -19,13 +19,13 @@ use File::MMagic;
 has source => (is => 'ro', default => '');
 
 
-has text => (is => 'ro', default => '');
+has text => (is => 'rwp', default => '');
 
 
-has content_type => (is => 'ro', default => 'text/plain');
+has content_type => (is => 'rwp', default => 'text/plain');
 
 
-has error => (is => 'ro', default => '');
+has error => (is => 'rwp', default => '');
 
 
 sub fetch
@@ -42,19 +42,22 @@ sub _fetch_file
     my $file;
     if (! open $file, '<', $self->source)
     {
-        $self->error = "Failed to open " . $self->source . ": $!";
+        $self->_set_error("Failed to open " . $self->source . ": $!");
         return;
     }
 
+    my $file_text;
     while (<$file>)
     {
-        $self->text .= $_;
+        $file_text .= $_;
     }
+    $self->_set_text($file_text);
 
     close $file;
 
     my $mm = new File::MMagic;
-    $self->content_type = $mm->checktype_contents($self->text) // 'text/plain';
+    $self->_set_content_type($mm->checktype_contents($self->text) 
+                             // 'text/plain');
 
     return 1;
 }
@@ -71,7 +74,7 @@ sub _fetch_url
 
     if (! $response->{success} || ! length($response->{content}))
     {
-        $self->error = "Failed to fetch $url: ";
+        $self->_set_error("Failed to fetch $url: ");
         if ($response->{status} == 599)
         {
             # Internal exception to HTTP::Tiny
@@ -86,8 +89,8 @@ sub _fetch_url
         return;
     }
 
-    $self->text = $response->{content};
-    $self->content_type = $response->{headers}->{'content-type'};
+    $self->_set_text($response->{content});
+    $self->_set_content_type($response->{headers}->{'content-type'});
 
     return 1;
 }
@@ -116,7 +119,7 @@ App::Zapzi::FetchArticle - routines to get articles for Zapzi
 
 =head1 VERSION
 
-version 0.001
+version 0.002
 
 =head1 DESCRIPTION
 

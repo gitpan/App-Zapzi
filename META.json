@@ -47,6 +47,7 @@
             "File::MMagic" : "0",
             "Getopt::Lucid" : "0",
             "HTML::Element" : "0",
+            "HTML::Entities" : "0",
             "HTML::ExtractMain" : "0",
             "HTTP::CookieJar" : "0",
             "HTTP::Tiny" : "0",
@@ -83,6 +84,6 @@
          "web" : "https://github.com/rupertl/app-zapzi"
       }
    },
-   "version" : "0.001"
+   "version" : "0.002"
 }
 

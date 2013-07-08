@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.001'; # VERSION
+our $VERSION = '0.002'; # VERSION
 
 use Moo;
 use SQL::Translator;
@@ -19,7 +19,14 @@ has app => (is => 'ro');
 sub database_file
 {
     my $self = shift;
-    return $self->app->zapzi_dir . "/zapzi.db";
+    if ($self->app->test_database)
+    {
+        return ':memory:';
+    }
+    else
+    {
+        return $self->app->zapzi_dir . "/zapzi.db";
+    }
 }
 
 
@@ -52,7 +59,8 @@ sub init
     mkdir $self->app->zapzi_ebook_dir;
 
     $self->schema->storage->disconnect if $self->app->force;
-    unlink $self->database_file;
+    unlink $self->database_file unless $self->app->test_database;
+    $_schema = undef;
 
     # Adjust the page size to match the expected blob size for articles
     # http://www.sqlite.org/intern-v-extern-blob.html
@@ -82,7 +90,7 @@ App::Zapzi::Database - database access for Zapzi
 
 =head1 VERSION
 
-version 0.001
+version 0.002
 
 =head1 DESCRIPTION
 

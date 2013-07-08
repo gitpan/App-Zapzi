@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.001'; # VERSION
+our $VERSION = '0.002'; # VERSION
 
 use Carp;
 use Encode;
@@ -69,7 +69,7 @@ sub _make_filename
 
     my $base = sprintf("Zapzi - %s.mobi", $self->_get_title);
 
-    $self->{filename} = $app->zapzi_ebook_dir . "/" . $base;
+    $self->_set_filename($app->zapzi_ebook_dir . "/" . $base);
 }
 
 1;
@@ -84,7 +84,7 @@ App::Zapzi::Publish - create eBooks from Zapzi articles
 
 =head1 VERSION
 
-version 0.001
+version 0.002
 
 =head1 DESCRIPTION
 

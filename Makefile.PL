@@ -33,6 +33,7 @@ my %WriteMakefileArgs = (
     "File::MMagic" => 0,
     "Getopt::Lucid" => 0,
     "HTML::Element" => 0,
+    "HTML::Entities" => 0,
     "HTML::ExtractMain" => 0,
     "HTTP::CookieJar" => 0,
     "HTTP::Tiny" => 0,
@@ -52,7 +53,7 @@ my %WriteMakefileArgs = (
     "Test::Most" => 0,
     "Test::Output" => 0
   },
-  "VERSION" => "0.001",
+  "VERSION" => "0.002",
   "test" => {
     "TESTS" => "t/*.t"
   }
