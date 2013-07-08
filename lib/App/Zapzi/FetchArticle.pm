@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.002'; # VERSION
+our $VERSION = '0.003'; # VERSION
 
 use Carp;
 use App::Zapzi;
@@ -74,18 +74,19 @@ sub _fetch_url
 
     if (! $response->{success} || ! length($response->{content}))
     {
-        $self->_set_error("Failed to fetch $url: ");
+        my $error = "Failed to fetch $url: ";
         if ($response->{status} == 599)
         {
             # Internal exception to HTTP::Tiny
-            $self->error .= $response->{content};
+            $error .= $response->{content};
         }
         else
         {
             # Error details from remote server
-            $self->error .= $response->{status} . " ";
-            $self->error .= $response->{reason};
+            $error .= $response->{status} . " ";
+            $error .= $response->{reason};
         }
+        $self->_set_error($error);
         return;
     }
 
@@ -119,7 +120,7 @@ App::Zapzi::FetchArticle - routines to get articles for Zapzi
 
 =head1 VERSION
 
-version 0.002
+version 0.003
 
 =head1 DESCRIPTION
 

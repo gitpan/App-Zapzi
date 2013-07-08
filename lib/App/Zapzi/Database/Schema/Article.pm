@@ -5,9 +5,10 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.002'; # VERSION
+our $VERSION = '0.003'; # VERSION
 
 use base 'DBIx::Class::Core';
+use DateTime::Format::SQLite;
 __PACKAGE__->load_components(qw/InflateColumn::DateTime/);
 
 
@@ -49,7 +50,7 @@ App::Zapzi::Database::Schema::Article - zapzi article table
 
 =head1 VERSION
 
-version 0.002
+version 0.003
 
 =head1 DESCRIPTION
 

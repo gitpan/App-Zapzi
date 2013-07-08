@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.002'; # VERSION
+our $VERSION = '0.003'; # VERSION
 
 require Exporter;
 our @ISA = qw(Exporter);
@@ -127,7 +127,7 @@ App::Zapzi::Articles - routines to access Zapzi articles
 
 =head1 VERSION
 
-version 0.002
+version 0.003
 
 =head1 DESCRIPTION
 

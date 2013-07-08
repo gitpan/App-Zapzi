@@ -26,6 +26,7 @@ my %WriteMakefileArgs = (
     "DBIx::Class::Core" => 0,
     "DBIx::Class::Schema" => 0,
     "DateTime" => 0,
+    "DateTime::Format::SQLite" => 0,
     "EBook::MOBI" => 0,
     "Encode" => 0,
     "Exporter" => 0,
@@ -53,7 +54,7 @@ my %WriteMakefileArgs = (
     "Test::Most" => 0,
     "Test::Output" => 0
   },
-  "VERSION" => "0.002",
+  "VERSION" => "0.003",
   "test" => {
     "TESTS" => "t/*.t"
   }

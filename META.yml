@@ -28,6 +28,7 @@ requires:
   DBIx::Class::Core: 0
   DBIx::Class::Schema: 0
   DateTime: 0
+  DateTime::Format::SQLite: 0
   EBook::MOBI: 0
   Encode: 0
   Exporter: 0
@@ -51,4 +52,4 @@ resources:
   bugtracker: https://github.com/rupertl/app-zapzi/issues
   homepage: https://metacpan.org/release/App-Zapzi
   repository: git://github.com/rupertl/app-zapzi.git
-version: 0.002
+version: 0.003

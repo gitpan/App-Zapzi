@@ -4,7 +4,7 @@ zapzi - a tool to store articles and publish them as eBooks to read later
 
 # VERSION
 
-version 0.002
+version 0.003
 
 # SYNOPSIS
 
