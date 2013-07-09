@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.003'; # VERSION
+our $VERSION = '0.004'; # VERSION
 
 require Exporter;
 our @ISA = qw(Exporter);
@@ -88,7 +88,7 @@ App::Zapzi::Folders - routines to access Zapzi folders
 
 =head1 VERSION
 
-version 0.003
+version 0.004
 
 =head1 DESCRIPTION
 

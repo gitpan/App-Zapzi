@@ -5,11 +5,11 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.003'; # VERSION
+our $VERSION = '0.004'; # VERSION
 
 binmode(STDOUT, ":encoding(UTF-8)");
 
-use Getopt::Lucid qw( :all );
+use Getopt::Lucid 1.05 qw( :all );
 use File::HomeDir;
 use App::Zapzi::Database;
 use App::Zapzi::Folders;
@@ -91,10 +91,10 @@ sub process_args
         Switch("add"),
         Switch("list|ls"),
         Switch("list-folders|lsf"),
-        Switch("make-folder|mkf"),
-        Switch("delete-folder|rmf"),
+        Switch("make-folder|mkf|md"),
+        Switch("delete-folder|rmf|rd"),
         Switch("delete-article|delete|rm"),
-        Switch("show"),
+        Switch("show|cat"),
         Switch("publish"),
 
         Param("folder|f"),
@@ -425,16 +425,16 @@ sub help
   $ zapzi list-folders | lsf
     Lists a summary of all folders.
 
-  $ zapzi make-folder | mkf FOLDER
+  $ zapzi make-folder | mkf | md FOLDER
     Make a new folder.
 
-  $ zapzi delete-folder | rmf FOLDER
+  $ zapzi delete-folder | rmf | rd FOLDER
     Remove a folder and all articles in it.
 
   $ zapzi delete-article | delete | rm ID
     Removes article ID.
 
-  $ zapzi show ID
+  $ zapzi show | cat ID
     Prints content of article to STDOUT
 
   $ zapzi publish [-f FOLDER]
@@ -469,7 +469,7 @@ App::Zapzi - store articles and publish them to read later
 
 =head1 VERSION
 
-version 0.003
+version 0.004
 
 =head1 DESCRIPTION
 

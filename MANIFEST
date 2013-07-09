@@ -18,7 +18,11 @@ lib/App/Zapzi/Database/Schema/Folder.pm
 lib/App/Zapzi/FetchArticle.pm
 lib/App/Zapzi/Folders.pm
 lib/App/Zapzi/Publish.pm
+lib/App/Zapzi/Roles/Transformer.pm
 lib/App/Zapzi/Transform.pm
+lib/App/Zapzi/Transformers/HTMLExtractMain.pm
+lib/App/Zapzi/Transformers/TextMarkdown.pm
+lib/App/Zapzi/Transformers/_Default.pm
 t/00-compile.t
 t/01-database.t
 t/02-folders.t

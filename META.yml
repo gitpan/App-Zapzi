@@ -33,14 +33,16 @@ requires:
   Encode: 0
   Exporter: 0
   File::HomeDir: 0
-  File::MMagic: 0
-  Getopt::Lucid: 0
+  File::MMagic: 1.30
+  Getopt::Lucid: 1.05
   HTML::Element: 0
   HTML::Entities: 0
-  HTML::ExtractMain: 0
+  HTML::ExtractMain: 0.63
   HTTP::CookieJar: 0
   HTTP::Tiny: 0
+  Module::Find: 0.11
   Moo: 0
+  Moo::Role: 0
   SQL::Translator: 0
   Text::Markdown: 0
   base: 0
@@ -52,4 +54,4 @@ resources:
   bugtracker: https://github.com/rupertl/app-zapzi/issues
   homepage: https://metacpan.org/release/App-Zapzi
   repository: git://github.com/rupertl/app-zapzi.git
-version: 0.003
+version: 0.004

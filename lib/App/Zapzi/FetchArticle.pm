@@ -6,14 +6,14 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.003'; # VERSION
+our $VERSION = '0.004'; # VERSION
 
 use Carp;
 use App::Zapzi;
 use Moo;
 use HTTP::Tiny;
 use HTTP::CookieJar;
-use File::MMagic;
+use File::MMagic 1.30;
 
 
 has source => (is => 'ro', default => '');
@@ -120,7 +120,7 @@ App::Zapzi::FetchArticle - routines to get articles for Zapzi
 
 =head1 VERSION
 
-version 0.003
+version 0.004
 
 =head1 DESCRIPTION
 

@@ -18,7 +18,7 @@ find(
     $found =~ s{^lib/}{};
     $found =~ s{[/\\]}{::}g;
     $found =~ s/\.pm$//;
-    # nothing to skip
+    return if $found =~ /App::Zapzi::(Roles|Transformers)/;
     push @modules, $found;
   },
   'lib',
@@ -32,7 +32,7 @@ sub _find_scripts {
       sub {
         return unless -f;
         my $found = $File::Find::name;
-        # nothing to skip
+        return if $found =~ /App::Zapzi::(Roles|Transformers)/;
         open my $FH, '<', $_ or do {
           note( "Unable to open $found in ( $! ), skipping" );
           return;
