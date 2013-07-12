@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use App::Zapzi;
-our $VERSION = '0.004'; # VERSION
+our $VERSION = '0.005'; # VERSION
 # ABSTRACT: a tool to store articles and publish them as eBooks to read later
 # PODNAME: zapzi
 
@@ -22,7 +22,7 @@ zapzi - a tool to store articles and publish them as eBooks to read later
 
 =head1 VERSION
 
-version 0.004
+version 0.005
 
 =head1 SYNOPSIS
 
@@ -134,7 +134,8 @@ to select another folder.
 If everything worked OK, Zapzi will create a new eBook in the ebooks
 sub-directory of your Zapzi directory, eg C<~/.zapzi/ebooks>.
 
-When you publish a folder, the articles are moved to the Archive folder.
+When you publish a folder, the articles are moved to the Archive
+folder unless you set the C<--noarchive> option.
 
 Instead of publishing, if you want to see a copy of an article use
 C<zapzi show>. This will send a copy to the standard output. It will
@@ -150,7 +151,7 @@ organisation of the module.
 
   https://github.com/rupertl/app-zapzi/
 
-=head1 FUTURE PLANS
+=head1 BUGS AND FUTURE PLANS
 
 This is an early version of Zapzi and although the basic functionality
 is there I plan to improve it further. If you have any suggestions
@@ -158,13 +159,14 @@ please add them to the issue tracker at Github.
 
 =over 4
 
+=item * Improve text extraction and formatting - complex pages may not
+render correctly or may miss sections at present
+
 =item * Support other ways to fetch articles, eg FTP or IMAP for email.
 
 =item * Support other article formats, eg mbox/maildir.
 
 =item * Add the ability to read sources with state, eg RSS feeds.
-
-=item * Improve text extraction and formatting.
 
 =item * Publish to other eBook formats such as EPUB or PDF.
 
@@ -211,8 +213,9 @@ pronounced ZAAP-zi in Cantonese.
   $ zapzi show | cat ID
     Prints content of article to STDOUT
 
-  $ zapzi publish [-f FOLDER]
-    Publishes articles in FOLDER to an eBook.
+  $ zapzi publish | pub [-f FOLDER] [--noarchive]
+    Publishes articles in FOLDER to an eBook. Will archive articles unless
+    --noarchive is set.
 
 =head1 AUTHOR
 

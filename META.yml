@@ -27,6 +27,7 @@ requires:
   Carp: 0
   DBIx::Class::Core: 0
   DBIx::Class::Schema: 0
+  Data::Validate::URI: 0.06
   DateTime: 0
   DateTime::Format::SQLite: 0
   EBook::MOBI: 0
@@ -54,4 +55,4 @@ resources:
   bugtracker: https://github.com/rupertl/app-zapzi/issues
   homepage: https://metacpan.org/release/App-Zapzi
   repository: git://github.com/rupertl/app-zapzi.git
-version: 0.004
+version: 0.005

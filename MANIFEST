@@ -16,8 +16,11 @@ lib/App/Zapzi/Database/Schema/Article.pm
 lib/App/Zapzi/Database/Schema/ArticleText.pm
 lib/App/Zapzi/Database/Schema/Folder.pm
 lib/App/Zapzi/FetchArticle.pm
+lib/App/Zapzi/Fetchers/File.pm
+lib/App/Zapzi/Fetchers/URL.pm
 lib/App/Zapzi/Folders.pm
 lib/App/Zapzi/Publish.pm
+lib/App/Zapzi/Roles/Fetcher.pm
 lib/App/Zapzi/Roles/Transformer.pm
 lib/App/Zapzi/Transform.pm
 lib/App/Zapzi/Transformers/HTMLExtractMain.pm

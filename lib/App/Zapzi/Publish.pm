@@ -6,17 +6,21 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.004'; # VERSION
+our $VERSION = '0.005'; # VERSION
 
 use Carp;
 use Encode;
 use App::Zapzi;
 use DateTime;
 use EBook::MOBI;
+use HTML::Entities;
 use Moo;
 
 
 has folder => (is => 'ro', required => 1);
+
+
+has archive_folder => (is => 'ro', required => 0, default => 'Archive');
 
 
 has filename => (is => 'rwp');
@@ -40,11 +44,13 @@ sub publish
     my $articles = App::Zapzi::Articles::get_articles($self->folder);
     while (my $article = $articles->next)
     {
-        $book->add_mhtml_content("<h1>" . $article->title . "</h1>\n");
+        $book->add_mhtml_content("<h1>" .
+                                 HTML::Entities::encode($article->title) .
+                                 "</h1>\n");
         $book->add_mhtml_content($article->article_text->text);
         $book->add_pagebreak();
-        App::Zapzi::Articles::move_article($article->id, 'Archive')
-            unless $self->folder eq 'Archive';
+
+        $self->_archive_article($article);
     }
 
     $book->make();
@@ -72,6 +78,17 @@ sub _make_filename
     $self->_set_filename($app->zapzi_ebook_dir . "/" . $base);
 }
 
+sub _archive_article
+{
+    my $self = shift;
+    my ($article) = @_;
+
+    if (defined($self->archive_folder) &&  $self->folder ne 'Archive')
+    {
+        App::Zapzi::Articles::move_article($article->id, $self->archive_folder);
+    }
+}
+
 1;
 
 __END__
@@ -84,7 +101,7 @@ App::Zapzi::Publish - create eBooks from Zapzi articles
 
 =head1 VERSION
 
-version 0.004
+version 0.005
 
 =head1 DESCRIPTION
 
@@ -99,6 +116,10 @@ later.
 =head2 folder
 
 Folder of articles to publish
+
+=head2 archive_folder
+
+Folder to move articles to after publication - undef means don't move.
 
 =head2 filename
 

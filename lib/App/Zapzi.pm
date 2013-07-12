@@ -5,7 +5,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.004'; # VERSION
+our $VERSION = '0.005'; # VERSION
 
 binmode(STDOUT, ":encoding(UTF-8)");
 
@@ -25,6 +25,9 @@ has run => (is => 'rw', default => -1);
 
 
 has force => (is => 'rw', default => 0);
+
+
+has noarchive => (is => 'rw', default => 0);
 
 
 has folder => (is => 'rw', default => 'Inbox');
@@ -95,15 +98,17 @@ sub process_args
         Switch("delete-folder|rmf|rd"),
         Switch("delete-article|delete|rm"),
         Switch("show|cat"),
-        Switch("publish"),
+        Switch("publish|pub"),
 
         Param("folder|f"),
         Switch("force"),
+        Switch("noarchive"),
     );
 
     my $options = Getopt::Lucid->getopt(\@specs, \@args)->validate;
 
     $self->force($options->get_force);
+    $self->noarchive($options->get_noarchive);
     $self->folder($options->get_folder // $self->folder);
 
     $self->help if $options->get_help;
@@ -360,7 +365,11 @@ sub show
         my $art_rs = App::Zapzi::Articles::get_article($_);
         if ($art_rs)
         {
-            print $art_rs->article_text->text, "\n\n";
+            print "<html><head><meta charset=\"utf-8\">\n";
+            printf("<title>%s</title>\n", $art_rs->title);
+            print("</head><body>\n");
+            print $art_rs->article_text->text, "\n";
+            print("</body></html>\n\b");
         }
         else
         {
@@ -388,7 +397,9 @@ sub publish
 
     printf("Publishing '%s' - %d articles\n", $self->folder, $count);
 
-    my $pub = App::Zapzi::Publish->new(folder => $self->folder);
+    my $pub = App::Zapzi::Publish->
+        new(folder => $self->folder,
+            archive_folder => $self->noarchive ? undef : 'Archive');
 
     if (! $pub->publish())
     {
@@ -437,8 +448,9 @@ sub help
   $ zapzi show | cat ID
     Prints content of article to STDOUT
 
-  $ zapzi publish [-f FOLDER]
-    Publishes articles in FOLDER to an eBook.
+  $ zapzi publish | pub [-f FOLDER] [--noarchive]
+    Publishes articles in FOLDER to an eBook. Will archive articles unless
+    --noarchive is set.
 EOF
 
     $self->run(0);
@@ -469,7 +481,7 @@ App::Zapzi - store articles and publish them to read later
 
 =head1 VERSION
 
-version 0.004
+version 0.005
 
 =head1 DESCRIPTION
 
@@ -487,6 +499,10 @@ terminates.
 =head2 force
 
 Option to force processing of the init command. Default is unset.
+
+=head2 noarchive
+
+Option to not archive articles on publication
 
 =head2 folder
 

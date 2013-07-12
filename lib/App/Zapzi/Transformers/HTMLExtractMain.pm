@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.004'; # VERSION
+our $VERSION = '0.005'; # VERSION
 
 use Carp;
 use Encode;
@@ -70,7 +70,13 @@ sub transform
         $element->delete;
     }
 
-    $self->_set_readable_text($tree->as_HTML);
+    # Set up options to extract the HTML from the tree
+    my $entities_to_encode = undef; # ie encode all entities
+    my $indent = ' ' x 4;
+    my $optional_end_tags = {};
+
+    $self->_set_readable_text($tree->as_HTML($entities_to_encode, $indent,
+                                             $optional_end_tags));
     return 1;
 }
 
@@ -86,7 +92,7 @@ App::Zapzi::Transformers::HTMLExtractMain - transform text using HTMLExtractMain
 
 =head1 VERSION
 
-version 0.004
+version 0.005
 
 =head1 DESCRIPTION
 

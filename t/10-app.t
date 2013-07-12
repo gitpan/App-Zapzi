@@ -19,6 +19,7 @@ test_show();
 test_add();
 test_delete_article();
 test_publish();
+test_publish_archive();
 test_help_version();
 
 done_testing();
@@ -115,7 +116,8 @@ sub test_show
 {
     my $app = get_test_app();
 
-    stdout_like( sub { $app->process_args(qw(show 1)) }, qr/Welcome to/,
+    stdout_like( sub { $app->process_args(qw(show 1)) },
+                 qr/<html>.*Welcome to/s,
                  'show' );
     ok( ! $app->run, 'show run' );
 
@@ -123,9 +125,13 @@ sub test_show
                  'cat' );
     ok( ! $app->run, 'cat run' );
 
+    stdout_like( sub { $app->process_args(qw(show)) }, qr/Need to provide/,
+                 'show missing article' );
+    ok( $app->run, 'show error run' );
+
     stdout_like( sub { $app->process_args(qw(show 0)) }, qr/Could not/,
                  'show error' );
-    ok( $app->run, 'make-folder run' );
+    ok( $app->run, 'show error run' );
 }
 
 sub test_add
@@ -142,6 +148,11 @@ sub test_add
                  'add html' );
     ok( ! $app->run, 'add html run' );
 
+    stdout_like( sub { $app->process_args(qw(add)) },
+                 qr/Need to provide/,
+                 'add missing article' );
+    ok( $app->run, 'add run' );
+
     stdout_like( sub { $app->process_args(qw(add t/testfiles/nonesuch.txt)) },
                  qr/Could not/,
                  'add error' );
@@ -156,6 +167,11 @@ sub test_delete_article
                  qr/Deleted article/,
                  'delete article' );
     ok( ! $app->run, 'rm run' );
+
+    stdout_like( sub { $app->process_args(qw(delete)) },
+                 qr/Need to provide/,
+                 'delete article missing ID' );
+    ok( $app->run, 'rm run' );
 
     stdout_like( sub { $app->process_args(qw(rm 0)) },
                  qr/Could not/,
@@ -172,15 +188,35 @@ sub test_publish
                  'publish' );
     ok( ! $app->run, 'publish run' );
 
-    stdout_like( sub { $app->process_args(qw(publish)) },
+    stdout_like( sub { $app->process_args(qw(pub)) },
                  qr/No articles/,
-                 'publish archives OK and rerun gives 0 articles' );
-    ok( $app->run, 'publish again run' );
+                 'pub archives OK and rerun gives 0 articles' );
+    ok( $app->run, 'pub again run' );
 
     stdout_like( sub { $app->process_args(qw(publish -f Nonesuch)) },
                  qr/does not exist/,
                  'publish error' );
     ok( $app->run, 'publish error run' );
+}
+
+sub test_publish_archive
+{
+    my $app = get_test_app();
+
+    $app->process_args(qw(mkf frob));
+    $app->process_args(qw(add -f frob t/testfiles/sample.txt));
+    $app->process_args(qw(add -f frob t/testfiles/sample.html));
+    stdout_like( sub { $app->process_args('lsf') }, qr/frob\s+2/,
+                 'added 2 docs to new folder' );
+
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(pub -f frob --noarchive)) },
+                 qr/2 articles.*Published/s,
+                 'pub' );
+    ok( ! $app->run, 'pub run' );
+
+    stdout_like( sub { $app->process_args('lsf') }, qr/frob\s+2/,
+                 'Articles not archived with --noarchive' );
 }
 
 sub test_help_version
@@ -194,4 +230,9 @@ sub test_help_version
     stdout_like( sub { $app->process_args(qw(version)) },
                  qr/App::Zapzi .* and Perl/s,
                  'version' );
+
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(unknown_command)) },
+                 qr/Shows this help text/s,
+                 'unknown command shows help' );
 }
