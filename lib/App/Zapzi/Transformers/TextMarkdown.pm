@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.005'; # VERSION
+our $VERSION = '0.006'; # VERSION
 
 use Carp;
 use Encode;
@@ -37,6 +37,9 @@ sub transform
 
     my $raw = Encode::decode_utf8($self->input->text);
 
+    # Chop off any blank lines at the top
+    $raw =~ s/^\n+//s;
+
     # We take the first line as the title, or up to 80 bytes
     $self->_set_title( (split /\n/, $raw)[0] );
     $self->_set_title(substr($self->title, 0, 80));
@@ -60,7 +63,7 @@ App::Zapzi::Transformers::TextMarkdown - transform text using Markdown
 
 =head1 VERSION
 
-version 0.005
+version 0.006
 
 =head1 DESCRIPTION
 

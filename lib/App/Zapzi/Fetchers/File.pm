@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.005'; # VERSION
+our $VERSION = '0.006'; # VERSION
 
 use Carp;
 use File::MMagic 1.30;
@@ -50,9 +50,19 @@ sub fetch
 
     close $file;
 
-    my $mm = File::MMagic->new();
-    $self->_set_content_type($mm->checktype_contents($self->text)
-                             // 'text/plain');
+    my $content_type;
+
+    # Try extension first
+    $content_type = 'text/plain' if $self->source =~ /\.(text|md|mkdn)$/;
+    $content_type = 'text/html' if $self->source =~ /\.(html)$/;
+
+    # Try file magic
+    $content_type //= File::MMagic->new()->checktype_contents($self->text);
+
+    # Default to plain text
+    $content_type //= 'text/plain';
+
+    $self->_set_content_type($content_type);
 
     return 1;
 }
@@ -69,7 +79,7 @@ App::Zapzi::Fetchers::File - fetch article from a file
 
 =head1 VERSION
 
-version 0.005
+version 0.006
 
 =head1 DESCRIPTION
 

@@ -14,6 +14,7 @@ lib/App/Zapzi/Database.pm
 lib/App/Zapzi/Database/Schema.pm
 lib/App/Zapzi/Database/Schema/Article.pm
 lib/App/Zapzi/Database/Schema/ArticleText.pm
+lib/App/Zapzi/Database/Schema/Config.pm
 lib/App/Zapzi/Database/Schema/Folder.pm
 lib/App/Zapzi/FetchArticle.pm
 lib/App/Zapzi/Fetchers/File.pm
@@ -23,6 +24,7 @@ lib/App/Zapzi/Publish.pm
 lib/App/Zapzi/Roles/Fetcher.pm
 lib/App/Zapzi/Roles/Transformer.pm
 lib/App/Zapzi/Transform.pm
+lib/App/Zapzi/Transformers/HTML.pm
 lib/App/Zapzi/Transformers/HTMLExtractMain.pm
 lib/App/Zapzi/Transformers/TextMarkdown.pm
 lib/App/Zapzi/Transformers/_Default.pm
@@ -35,11 +37,16 @@ t/05-transform.t
 t/06-publish.t
 t/10-app.t
 t/author-critic.t
+t/ddl/create-version-0-db.sql
 t/lib/ZapziTestDatabase.pm
 t/lib/ZapziTestSchema.pm
 t/release-distmeta.t
 t/release-pod-coverage.t
 t/release-pod-syntax.t
 t/release-test-version.t
+t/testfiles/html-fragment.html
+t/testfiles/html-no-title.html
+t/testfiles/html-two-titles.html
 t/testfiles/sample.html
 t/testfiles/sample.txt
+t/testfiles/ws-and-long-lines.txt

@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.005'; # VERSION
+our $VERSION = '0.006'; # VERSION
 
 use Module::Find 0.11;
 our @_plugins;
@@ -26,6 +26,9 @@ has raw_article => (is => 'ro', isa => sub
                     });
 
 
+has transformer => (is => 'rw', default => '');
+
+
 has readable_text => (is => 'rwp', default => '');
 
 
@@ -39,10 +42,18 @@ sub to_readable
     my $module;
     for (@_plugins)
     {
-        my $plugin = $_;
-        if ($plugin->handles($self->raw_article->content_type))
+        my $selected;
+
+        $selected = $_ if $self->transformer &&
+                       lc($self->transformer) eq lc($_->name);
+
+        $selected = $_ if !$self->transformer &&
+                          ($_->handles($self->raw_article->content_type));
+
+        if ($selected)
         {
-            $module = $plugin->new(input => $self->raw_article);
+            $module = $selected->new(input => $self->raw_article);
+            $self->transformer($selected->name);
             last;
         }
     }
@@ -71,7 +82,7 @@ App::Zapzi::Transform - routines to transform Zapzi articles to readble HTML
 
 =head1 VERSION
 
-version 0.005
+version 0.006
 
 =head1 DESCRIPTION
 
@@ -82,6 +93,12 @@ This class takes text or HTML and returns readable HTML.
 =head2 raw_article
 
 Object of type App::Zapzi::FetchArticle to get original text from.
+
+=head2 transformer
+
+Name of the transformer to use. If not specified it will choose the
+best option based on the content type of the raw article and set this
+field.
 
 =head2 readable_text
 

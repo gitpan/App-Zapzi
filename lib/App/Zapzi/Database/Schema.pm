@@ -5,12 +5,18 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.005'; # VERSION
+our $VERSION = '0.006'; # VERSION
 
 use base 'DBIx::Class::Schema';
 
 # Load Result classes under this schema
-__PACKAGE__->load_classes(qw/Article ArticleText Folder/);
+__PACKAGE__->load_classes(qw/Article ArticleText Config Folder/);
+
+
+sub schema_version
+{
+    return 1;
+}
 
 1;
 
@@ -24,7 +30,13 @@ App::Zapzi::Database::Schema - database schema for zapzi
 
 =head1 VERSION
 
-version 0.005
+version 0.006
+
+=head1 METHODS
+
+=head2 schema_version
+
+The version of the database schema that the code expects
 
 =head1 AUTHOR
 

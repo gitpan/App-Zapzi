@@ -5,7 +5,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.005'; # VERSION
+our $VERSION = '0.006'; # VERSION
 
 binmode(STDOUT, ":encoding(UTF-8)");
 
@@ -17,7 +17,7 @@ use App::Zapzi::Articles;
 use App::Zapzi::FetchArticle;
 use App::Zapzi::Transform;
 use App::Zapzi::Publish;
-use Moo;
+use Moo 1.003000;
 use Carp;
 
 
@@ -31,6 +31,9 @@ has noarchive => (is => 'rw', default => 0);
 
 
 has folder => (is => 'rw', default => 'Inbox');
+
+
+has transformer => (is => 'rw', default => '');
 
 
 our $_the_app;
@@ -101,6 +104,7 @@ sub process_args
         Switch("publish|pub"),
 
         Param("folder|f"),
+        Param("transformer|t"),
         Switch("force"),
         Switch("noarchive"),
     );
@@ -110,6 +114,7 @@ sub process_args
     $self->force($options->get_force);
     $self->noarchive($options->get_noarchive);
     $self->folder($options->get_folder // $self->folder);
+    $self->transformer($options->get_transformer // $self->transformer);
 
     $self->help if $options->get_help;
     $self->version if $options->get_version;
@@ -122,6 +127,10 @@ sub process_args
         $self->run(1);
         return;
     }
+
+    # Upgrade the DB, if needed
+    $self->database->upgrade
+        unless $self->database->check_version || $self->run == 0;
 
     unless ($options->get_make_folder)
     {
@@ -328,7 +337,8 @@ sub add
             next;
         }
 
-        my $tx = App::Zapzi::Transform->new(raw_article => $f);
+        my $tx = App::Zapzi::Transform->new(raw_article => $f,
+                                            transformer => $self->transformer);
         if (! $tx->to_readable)
         {
             print "Could not transform article\n\n";
@@ -415,7 +425,7 @@ sub publish
 sub help
 {
     my $self = shift;
-    
+
     print << 'EOF';
   $ zapzi help|h
     Shows this help text
@@ -424,11 +434,15 @@ sub help
     Show version information
 
   $ zapzi init [--force]
-    Initialises new zapzi database. Will not create a new database 
+    Initialises new zapzi database. Will not create a new database
     if one exists already unless you set --force.
 
-  $ zapzi add FILE | URL
+  $ zapzi add [-t TRANSFORMER] FILE | URL
     Adds article to database. Accepts multiple file names or URLs.
+    TRANSFORMER determines how to extract the text from the article
+    and can be HTML, HTMLExtractMain or TextMarkdown
+    If not specified, Zapzi will choose the best option based on the
+    content type of the article.
 
   $ zapzi list | ls [-f FOLDER]
     Lists articles in FOLDER.
@@ -466,6 +480,7 @@ sub version
     $v = "$VERSION" if defined $VERSION;
 
     print "App::Zapzi $v and Perl $]\n";
+    print "Database schema version ", $self->database->get_version, "\n";
     $self->run(0);
 }
 
@@ -481,7 +496,7 @@ App::Zapzi - store articles and publish them to read later
 
 =head1 VERSION
 
-version 0.005
+version 0.006
 
 =head1 DESCRIPTION
 
@@ -507,6 +522,12 @@ Option to not archive articles on publication
 =head2 folder
 
 Folder to work on. Default is 'Inbox'
+
+=head2 transformer
+
+Transformer to extract text from the article. Default is '', which
+means Zapzi will automatically the best option based on the content
+type of the text.
 
 =head2 zapzi_dir
 

@@ -28,7 +28,7 @@ my %WriteMakefileArgs = (
     "Data::Validate::URI" => "0.06",
     "DateTime" => 0,
     "DateTime::Format::SQLite" => 0,
-    "EBook::MOBI" => 0,
+    "EBook::MOBI" => "0.65",
     "Encode" => 0,
     "Exporter" => 0,
     "File::HomeDir" => 0,
@@ -40,7 +40,7 @@ my %WriteMakefileArgs = (
     "HTTP::CookieJar" => 0,
     "HTTP::Tiny" => 0,
     "Module::Find" => "0.11",
-    "Moo" => 0,
+    "Moo" => "1.003000",
     "Moo::Role" => 0,
     "SQL::Translator" => 0,
     "Text::Markdown" => 0,
@@ -51,13 +51,14 @@ my %WriteMakefileArgs = (
   },
   "TEST_REQUIRES" => {
     "File::Find" => 0,
+    "File::Slurp" => 0,
     "File::Temp" => 0,
     "Test::DBIx::Class::Schema" => 0,
     "Test::More" => 0,
     "Test::Most" => 0,
     "Test::Output" => 0
   },
-  "VERSION" => "0.005",
+  "VERSION" => "0.006",
   "test" => {
     "TESTS" => "t/*.t"
   }

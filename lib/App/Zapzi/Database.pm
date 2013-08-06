@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.005'; # VERSION
+our $VERSION = '0.006'; # VERSION
 
 use Moo;
 use SQL::Translator;
@@ -53,8 +53,10 @@ sub schema
 sub init
 {
     my $self = shift;
+    my ($ddl) = @_;
+
     mkdir $self->app->zapzi_dir;
-    die "Can't access ", $self->app->zapzi_dir 
+    die "Can't access ", $self->app->zapzi_dir
         if ! -d $self->app->zapzi_dir;
     mkdir $self->app->zapzi_ebook_dir;
 
@@ -66,6 +68,19 @@ sub init
     # http://www.sqlite.org/intern-v-extern-blob.html
     $self->schema->storage->dbh->do("PRAGMA page_size = 8192");
 
+    if (defined($ddl))
+    {
+        # Create a special version of the database from the supplied DDL
+        # Used for testing upgrades
+        my @commands = split(/;\n/, $ddl);
+        for (@commands)
+        {
+            $self->schema->storage->dbh->do($_);
+        }
+
+        return;
+    }
+
     $self->schema->deploy();
 
     my @folders = ({id => 100, name => 'Inbox'},
@@ -73,9 +88,59 @@ sub init
     $self->schema->populate('Folder', \@folders);
 
     my @articles = ({title => 'Welcome to Zapzi', folder => 100,
-                     article_text => 
+                     article_text =>
                          { text => '<p>Welcome to Zapzi! Please run <pre>zapzi -h</pre> to see documentation.</p>'}});
     $self->schema->populate('Article', \@articles);
+
+    my @config = ({name => 'schema_version',
+                   value => $self->schema->schema_version});
+    $self->schema->populate('Config', \@config);
+}
+
+
+sub get_version
+{
+    my $self = shift;
+    my $schema = $self->schema;
+
+    my $version;
+
+    # A database without a config table is version 0
+    eval { $version = $schema->resultset('Config')
+               ->find({name => 'schema_version'})->value };
+    return $@ ? 0 : $version;
+}
+
+
+
+sub check_version
+{
+    my $self = shift;
+
+    return $self->get_version == $self->schema->schema_version;
+}
+
+
+sub upgrade
+{
+    my $self = shift;
+    my $schema = $self->schema;
+
+    my $from = $self->get_version;
+    my $to = $self->schema->schema_version;
+
+    print "Upgrading database from version $from to $to\n";
+
+    if ($from == 0)
+    {
+        $self->schema->storage->dbh->do("CREATE TABLE config ( " .
+                                        "   name text NOT NULL, " .
+                                        "   value text NOT NULL DEFAULT '', " .
+                                        "   PRIMARY KEY (name) ".
+                                        ")");
+        $schema->resultset('Config')->create({name => 'schema_version',
+                                              value => '1'});
+    }
 }
 
 1;
@@ -90,7 +155,7 @@ App::Zapzi::Database - database access for Zapzi
 
 =head1 VERSION
 
-version 0.005
+version 0.006
 
 =head1 DESCRIPTION
 
@@ -119,6 +184,19 @@ The DBIx::Class::Schema object for the application.
 =head2 init
 
 Initialise the database to a new state.
+
+=head2 get_version
+
+Returns the version of the schema defined in the database
+
+=head2 check_version
+
+Compares the version of the schema in the database to that in the
+code. Return true if they match, undef if not.
+
+=head2 upgrade
+
+Upgrades the database to the current schema version.
 
 =head1 AUTHOR
 
