@@ -1,5 +1,9 @@
 Revision history for App-Zapzi
 
+0.008     2013-08-16 18:35:49 Asia/Hong_Kong
+
+  * Bugfix for perl < 5.14
+
 0.007     2013-08-16 16:43:31 Asia/Hong_Kong
 
   * Added POD format (by file or module name) for input articles

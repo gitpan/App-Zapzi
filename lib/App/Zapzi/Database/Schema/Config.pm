@@ -4,7 +4,7 @@ package App::Zapzi::Database::Schema::Config;
 use strict;
 use warnings;
 
-our $VERSION = '0.007'; # VERSION
+our $VERSION = '0.008'; # VERSION
 
 use base 'DBIx::Class::Core';
 
@@ -37,7 +37,7 @@ App::Zapzi::Database::Schema::Config - zapzi config table
 
 =head1 VERSION
 
-version 0.007
+version 0.008
 
 =head1 DESCRIPTION
 

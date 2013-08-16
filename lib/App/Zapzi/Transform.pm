@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.007'; # VERSION
+our $VERSION = '0.008'; # VERSION
 
 use Module::Find 0.11;
 our @_plugins;
@@ -82,7 +82,7 @@ App::Zapzi::Transform - routines to transform Zapzi articles to readble HTML
 
 =head1 VERSION
 
-version 0.007
+version 0.008
 
 =head1 DESCRIPTION
 

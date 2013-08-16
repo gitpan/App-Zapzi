@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.007'; # VERSION
+our $VERSION = '0.008'; # VERSION
 
 require Exporter;
 our @ISA = qw(Exporter);
@@ -50,7 +50,7 @@ sub articles_summary
 
     while (my $article = $rs->next)
     {
-        push $summary, {id => $article->id,
+        push @$summary, {id => $article->id,
                         created => $article->created,
                         title => $article->title};
     }
@@ -145,7 +145,7 @@ App::Zapzi::Articles - routines to access Zapzi articles
 
 =head1 VERSION
 
-version 0.007
+version 0.008
 
 =head1 DESCRIPTION
 
