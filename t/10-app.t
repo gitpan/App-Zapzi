@@ -15,7 +15,7 @@ test_list();
 test_list_folders();
 test_make_folder();
 test_delete_folder();
-test_show();
+test_export();
 test_add();
 test_delete_article();
 test_publish();
@@ -112,11 +112,11 @@ sub test_delete_folder
     ok( ! $app->run, 'make-folder run' );
 }
 
-sub test_show
+sub test_export
 {
     my $app = get_test_app();
 
-    stdout_like( sub { $app->process_args(qw(show 1)) },
+    stdout_like( sub { $app->process_args(qw(export 1)) },
                  qr/<html>.*Welcome to/s,
                  'show' );
     ok( ! $app->run, 'show run' );
@@ -125,11 +125,11 @@ sub test_show
                  'cat' );
     ok( ! $app->run, 'cat run' );
 
-    stdout_like( sub { $app->process_args(qw(show)) }, qr/Need to provide/,
+    stdout_like( sub { $app->process_args(qw(cat)) }, qr/Need to provide/,
                  'show missing article' );
     ok( $app->run, 'show error run' );
 
-    stdout_like( sub { $app->process_args(qw(show 0)) }, qr/Could not/,
+    stdout_like( sub { $app->process_args(qw(cat 0)) }, qr/Could not/,
                  'show error' );
     ok( $app->run, 'show error run' );
 }
@@ -153,6 +153,12 @@ sub test_add
                  qr/Added article/,
                  'add html with transformer' );
     ok( ! $app->run, 'add html with transformer run' );
+
+    stdout_like( sub { $app->process_args(
+                          qw(add File::Basename)) },
+                 qr/Added article/,
+                 'add POD' );
+    ok( ! $app->run, 'add POD with transformer run' );
 
     $app = get_test_app();
     stdout_like( sub { $app->process_args(qw(add)) },
@@ -198,7 +204,7 @@ sub test_publish
     my $app = get_test_app();
 
     stdout_like( sub { $app->process_args(qw(publish)) },
-                 qr/3 articles.*Published/s,
+                 qr/4 articles.*Published/s,
                  'publish' );
     ok( ! $app->run, 'publish run' );
 

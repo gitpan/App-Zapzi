@@ -3,7 +3,7 @@ NAME
     later
 
 VERSION
-    version 0.006
+    version 0.007
 
 SYNOPSIS
       $ zapzi init
@@ -32,7 +32,7 @@ DESCRIPTION
   FEATURES
     *   Can read articles from local files or via HTTP.
 
-    *   Understands plain text, HTML and Markdown format articles.
+    *   Understands plain text, POD, HTML and Markdown format articles.
 
     *   HTML is converted to a more readable form (eg no menus or footers)
         to make the article easier to view on an eReader.
@@ -56,9 +56,10 @@ DESCRIPTION
     environment variable "ZAPZI_DIR".
 
   ADDING ARTICLES
-    To add an article, use "zapzi add" with a filename on your computer or
-    an HTTP URL. Remember to quote URLs if they include space or shell
-    special characters, eg
+    To add an article, use "zapzi add" with a filename on your computer, the
+    name of a module containing POD (eg File::Basename) or an HTTP URL.
+    Remember to quote URLs if they include space or shell special
+    characters, eg
 
       $ zapzi add 'http://example.com/article?id=4'
 
@@ -117,8 +118,9 @@ DESCRIPTION
     unless you set the "--noarchive" option.
 
     Instead of publishing, if you want to see a copy of an article use
-    "zapzi show". This will send a copy to the standard output. It will not
-    archive the article.
+    "zapzi show" to view the article in a browser or "zapzi export" to send
+    a copyof the readable article to the standard output. Both these
+    commands will not archive the article.
 
 SUPPORT AND DEVELOPMENT
     Bugs and requested issues can be reported at Github. Pull requests are
@@ -158,13 +160,13 @@ USAGE
         Show version information
 
       $ zapzi init [--force]
-        Initialises new zapzi database. Will not create a new database 
+        Initialises new zapzi database. Will not create a new database
         if one exists already unless you set --force.
 
-      $ zapzi add [-t TRANSFORMER] FILE | URL
+      $ zapzi add [-t TRANSFORMER] FILE | URL | POD
         Adds article to database. Accepts multiple file names or URLs.
         TRANSFORMER determines how to extract the text from the article
-        and can be HTML, HTMLExtractMain or TextMarkdown
+        and can be HTML, HTMLExtractMain, POD or TextMarkdown
         If not specified, Zapzi will choose the best option based on the
         content type of the article.
 
@@ -183,8 +185,11 @@ USAGE
       $ zapzi delete-article | delete | rm ID
         Removes article ID.
 
-      $ zapzi show | cat ID
-        Prints content of article to STDOUT
+      $ zapzi export | cat ID
+        Prints content of readable article to STDOUT
+
+      $ zapzi show | view ID
+        Opens a browser to view the readable text of article ID
 
       $ zapzi publish | pub [-f FOLDER] [--noarchive]
         Publishes articles in FOLDER to an eBook. Will archive articles unless

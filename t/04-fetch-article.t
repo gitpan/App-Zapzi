@@ -13,6 +13,7 @@ my ($test_dir, $app) = ZapziTestDatabase::get_test_app();
 
 test_get_file();
 test_get_url();
+test_get_pod();
 done_testing();
 
 sub test_can
@@ -25,6 +26,7 @@ sub test_get_file
     my $f = App::Zapzi::FetchArticle->new(source => 't/testfiles/sample.txt');
     isa_ok( $f, 'App::Zapzi::FetchArticle' );
     ok( $f->fetch, 'Fetch sample text file' );
+    is( $f->fetcher, 'File', 'Text file was handled by File fetcher' );
     like( $f->text, qr/sample text file/, 'Contents of text file OK' );
     is( $f->content_type, 'text/plain', 'Contents are plain text' );
 
@@ -53,20 +55,15 @@ sub test_get_url
     my $f = App::Zapzi::FetchArticle->new(source => 'http://example.com/');
     isa_ok( $f, 'App::Zapzi::FetchArticle' );
     ok( $f->fetch, 'Fetch sample URL' );
+    is( $f->fetcher, 'URL', 'Text file was handled by URL fetcher' );
     like( $f->text, qr/Example Domain/, 'Contents of test URL OK' );
     like( $f->content_type, qr(text/html), 'Contents are HTML' );
 
     $f = App::Zapzi::FetchArticle->new(source =>
-                                       'http://example.iana.org/nonesuch');
+                                       'http://www.perl.com/nonesuch');
     isa_ok( $f, 'App::Zapzi::FetchArticle' );
     ok( ! $f->fetch, 'Detects URL 404' );
     like( $f->error, qr/404/, 'Error reported' );
-
-    $f = App::Zapzi::FetchArticle->new(source =>
-                                       'http://no-such-domain-really.com/');
-    isa_ok( $f, 'App::Zapzi::FetchArticle' );
-    ok( ! $f->fetch, 'Detects host that does not exist' );
-    like( $f->error, qr/Failed/, 'Error reported' );
 
     $f = App::Zapzi::FetchArticle->new(source =>
                                        'http://999.999.999.999/foo');
@@ -80,3 +77,15 @@ sub test_get_url
     ok( ! $f->fetch, 'Detects invalid URI type' );
     like( $f->error, qr/Failed/, 'Error reported' );
 }
+
+sub test_get_pod
+{
+    # File::Basename should be available in all perls we support
+    my $f = App::Zapzi::FetchArticle->new(source => 'File::Basename');
+    isa_ok( $f, 'App::Zapzi::FetchArticle' );
+    ok( $f->fetch, 'Fetch sample text file' );
+    is( $f->fetcher, 'POD', 'POD file was handled by POD fetcher' );
+    like( $f->text, qr/SYNOPSIS/, 'Contents of POD file OK' );
+    is( $f->content_type, 'text/pod', 'Contents are POD' );
+}
+

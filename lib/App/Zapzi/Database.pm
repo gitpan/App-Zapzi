@@ -6,11 +6,12 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.006'; # VERSION
+our $VERSION = '0.007'; # VERSION
 
 use Moo;
 use SQL::Translator;
 use App::Zapzi::Database::Schema;
+use App::Zapzi::Config;
 
 
 has app => (is => 'ro');
@@ -105,9 +106,9 @@ sub get_version
 
     my $version;
 
-    # A database without a config table is version 0
-    eval { $version = $schema->resultset('Config')
-               ->find({name => 'schema_version'})->value };
+    # If the eval fails, there's no config table, so this must be
+    # schema version 0.
+    eval { $version = App::Zapzi::Config::get('schema_version') };
     return $@ ? 0 : $version;
 }
 
@@ -138,8 +139,7 @@ sub upgrade
                                         "   value text NOT NULL DEFAULT '', " .
                                         "   PRIMARY KEY (name) ".
                                         ")");
-        $schema->resultset('Config')->create({name => 'schema_version',
-                                              value => '1'});
+        App::Zapzi::Config::set('schema_version', 1);
     }
 }
 
@@ -155,7 +155,7 @@ App::Zapzi::Database - database access for Zapzi
 
 =head1 VERSION
 
-version 0.006
+version 0.007
 
 =head1 DESCRIPTION
 

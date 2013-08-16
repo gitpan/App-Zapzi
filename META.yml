@@ -4,8 +4,6 @@ author:
   - 'Rupert Lane <rupert@rupert-lane.org>'
 build_requires:
   File::Find: 0
-  File::Slurp: 0
-  File::Temp: 0
   Test::DBIx::Class::Schema: 0
   Test::More: 0
   Test::Most: 0
@@ -25,6 +23,7 @@ no_index:
     - t/lib
     - xt
 requires:
+  Browser::Open: 0
   Carp: 0
   DBIx::Class::Core: 0
   DBIx::Class::Schema: 0
@@ -34,8 +33,11 @@ requires:
   EBook::MOBI: 0.65
   Encode: 0
   Exporter: 0
+  File::Basename: 0
   File::HomeDir: 0
   File::MMagic: 1.30
+  File::Slurp: 0
+  File::Temp: 0
   Getopt::Lucid: 1.05
   HTML::Element: 0
   HTML::Entities: 0
@@ -45,6 +47,8 @@ requires:
   Module::Find: 0.11
   Moo: 1.003000
   Moo::Role: 0
+  Pod::Find: 0
+  Pod::Html: 0
   SQL::Translator: 0
   Text::Markdown: 0
   base: 0
@@ -56,4 +60,4 @@ resources:
   bugtracker: https://github.com/rupertl/app-zapzi/issues
   homepage: https://metacpan.org/release/App-Zapzi
   repository: git://github.com/rupertl/app-zapzi.git
-version: 0.006
+version: 0.007

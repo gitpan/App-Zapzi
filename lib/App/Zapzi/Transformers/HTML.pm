@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.006'; # VERSION
+our $VERSION = '0.007'; # VERSION
 
 use Carp;
 use Encode;
@@ -34,12 +34,18 @@ sub transform
 {
     my $self = shift;
 
+    # Use the passed in text if explicity set, else get it from the
+    # fetched article object. This is used by derived classes that
+    # transform text into HTML then call this method.
+    my ($input) = @_;
+    $input //= $self->input->text;
+
     my $encoding = 'utf8';
     if ($self->input->content_type =~ m/charset=([\w-]+)/)
     {
         $encoding = $1;
     }
-    my $raw_html = Encode::decode($encoding, $self->input->text);
+    my $raw_html = Encode::decode($encoding, $input);
 
     $self->_extract_title($raw_html);
 
@@ -116,7 +122,7 @@ App::Zapzi::Transformers::HTML - transform text using HTMLExtractMain
 
 =head1 VERSION
 
-version 0.006
+version 0.007
 
 =head1 DESCRIPTION
 
@@ -133,7 +139,7 @@ Name of transformer visible to user.
 
 Returns true if this module handles the given content-type
 
-=head2 transform
+=head2 transform(input)
 
 Converts L<input> to readable text. Returns true if converted OK.
 

@@ -6,12 +6,12 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.006'; # VERSION
+our $VERSION = '0.007'; # VERSION
 
 require Exporter;
 our @ISA = qw(Exporter);
-our @EXPORT_OK = qw(get_articles get_article list_articles add_article
-                    move_article delete_article);
+our @EXPORT_OK = qw(get_articles get_article articles_summary add_article
+                    move_article delete_article export_article);
 
 use Carp;
 use App::Zapzi;
@@ -41,18 +41,21 @@ sub get_article
 }
 
 
-sub list_articles
+sub articles_summary
 {
     my ($folder) = @_;
 
     my $rs = get_articles($folder);
+    my $summary = [];
 
     while (my $article = $rs->next)
     {
-        printf("%s %4d %s %-45s\n", $article->folder->name,
-               $article->id, $article->created->strftime('%d-%b-%Y'),
-               $article->title);
+        push $summary, {id => $article->id,
+                        created => $article->created,
+                        title => $article->title};
     }
+
+    return $summary;
 }
 
 
@@ -107,6 +110,21 @@ sub delete_article
     return $article->delete;
 }
 
+
+sub export_article
+{
+    my $id = shift;
+
+    my $rs = get_article($id);
+    return unless $rs;
+
+    my $html = sprintf("<html><head><meta charset=\"utf-8\">\n" .
+                       "<title>%s</title></head><body>%s</body></html>\n",
+                       $rs->title, $rs->article_text->text);
+
+    return $html;
+}
+
 # Convenience function to get the DBIx::Class::ResultSet object for
 # this table.
 
@@ -127,7 +145,7 @@ App::Zapzi::Articles - routines to access Zapzi articles
 
 =head1 VERSION
 
-version 0.006
+version 0.007
 
 =head1 DESCRIPTION
 
@@ -143,9 +161,10 @@ Returns a resultset of articles that are in C<$folder>.
 
 Returns the resultset for the article identified by C<id>.
 
-=head2 list_articles(folder)
+=head2 articles_summary(folder)
 
-Prints to STDOUT a summary of articles in C<folder>.
+Return a summary of articles in C<folder> as a list of articles, each
+item being a hash ref with keys id, created and title.
 
 =head2 add_article(args)
 
@@ -173,6 +192,11 @@ folder or article does not exist.
 
 Deletes article C<id> if it exists. Returns the DB result status for
 the deletion.
+
+=head2 export_article(id)
+
+Returns the text of article C<id> if it exists, else undef. Text will
+be wrapped in a HTML header so it can be viewed separately.
 
 =head1 AUTHOR
 

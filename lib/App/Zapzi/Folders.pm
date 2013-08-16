@@ -6,12 +6,12 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.006'; # VERSION
+our $VERSION = '0.007'; # VERSION
 
 require Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(is_system_folder get_folder add_folder delete_folder
-                    list_folders);
+                    folders_summary);
 
 use App::Zapzi;
 use Carp;
@@ -58,14 +58,17 @@ sub delete_folder
 }
 
 
-sub list_folders
+sub folders_summary
 {
     my $rs = _folders()->search(undef, {prefetch => [qw(articles)]});
 
+    my $summary;
     while (my $folder = $rs->next)
     {
-        printf("%-10s %3d\n", $folder->name, $folder->articles->count);
+        $summary->{$folder->name} = $folder->articles->count;
     }
+
+    return $summary;
 }
 
 # Convenience function to get the DBIx::Class::ResultSet object for
@@ -88,7 +91,7 @@ App::Zapzi::Folders - routines to access Zapzi folders
 
 =head1 VERSION
 
-version 0.006
+version 0.007
 
 =head1 DESCRIPTION
 
@@ -114,10 +117,10 @@ already, otherwise the result of the DB add function.
 Deletes folder C<name> if it exists. Returns the DB result status for
 the deletion.
 
-=head2 list_folders
+=head2 folders_summary
 
-Print a summary of all folders in the database showing name and count
-of articles.
+Returns a ref to a hash where keys are the folder names and value is
+the article count.
 
 =head1 AUTHOR
 
