@@ -5,7 +5,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.008'; # VERSION
+our $VERSION = '0.009'; # VERSION
 
 use base 'DBIx::Class::Schema';
 
@@ -15,7 +15,7 @@ __PACKAGE__->load_classes(qw/Article ArticleText Config Folder/);
 
 sub schema_version
 {
-    return 1;
+    return 2;
 }
 
 1;
@@ -30,7 +30,7 @@ App::Zapzi::Database::Schema - database schema for zapzi
 
 =head1 VERSION
 
-version 0.008
+version 0.009
 
 =head1 METHODS
 

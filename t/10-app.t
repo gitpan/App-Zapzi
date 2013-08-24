@@ -44,6 +44,11 @@ sub test_list
     stdout_like( sub { $app->process_args('list') }, qr/Inbox/, 'list' );
     ok( ! $app->run, 'list run' );
 
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(ls -l)) },
+                 qr/Folder:\s+Inbox/, 'ls -l' );
+    ok( ! $app->run, 'ls -l run' );
+
     stdout_like( sub { $app->process_args(qw(list -f Nonesuch)) },
                  qr/does not exist/, 'list for non-existent folder' );
     ok( $app->run, 'list error run' );
@@ -160,6 +165,13 @@ sub test_add
                  'add POD' );
     ok( ! $app->run, 'add POD with transformer run' );
 
+    # Try adding an article and immediately exporting it
+    stdout_like( sub { $app->process_args(
+                           qw(add --cat t/testfiles/sample.txt)) },
+                 qr/This is a sample text file/,
+                 'add+cat' );
+    ok( ! $app->run, 'add+cat run' );
+
     $app = get_test_app();
     stdout_like( sub { $app->process_args(qw(add)) },
                  qr/Need to provide/,
@@ -204,7 +216,7 @@ sub test_publish
     my $app = get_test_app();
 
     stdout_like( sub { $app->process_args(qw(publish)) },
-                 qr/4 articles.*Published/s,
+                 qr/5 articles.*Published/s,
                  'publish' );
     ok( ! $app->run, 'publish run' );
 

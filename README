@@ -3,7 +3,7 @@ NAME
     later
 
 VERSION
-    version 0.008
+    version 0.009
 
 SYNOPSIS
       $ zapzi init
@@ -106,6 +106,8 @@ DESCRIPTION
       $ zapzi ls -f Foo
       Foo      1 05-Jul-2013 Project readme
 
+    Use the "-l" option to "ls" to get a more detailed listing.
+
   PUBLISHING
     To create an eBook, run "zapzi publish" or "zapzi pub". By default this
     will publish articles from the Inbox folder; use the "-f" option to
@@ -117,10 +119,18 @@ DESCRIPTION
     When you publish a folder, the articles are moved to the Archive folder
     unless you set the "--noarchive" option.
 
+  SHOWING AND EXPORTING
     Instead of publishing, if you want to see a copy of an article use
     "zapzi show" to view the article in a browser or "zapzi export" to send
-    a copyof the readable article to the standard output. Both these
+    a copy of the readable article to the standard output. Both these
     commands will not archive the article.
+
+    You can chain together adding and showing, eg
+
+      $ zapzi add show README.md
+
+    will add a copy of README.md to the database and then open a browser to
+    show how it looks in readable format.
 
 SUPPORT AND DEVELOPMENT
     Bugs and requested issues can be reported at Github. Pull requests are
@@ -170,8 +180,9 @@ USAGE
         If not specified, Zapzi will choose the best option based on the
         content type of the article.
 
-      $ zapzi list | ls [-f FOLDER]
-        Lists articles in FOLDER.
+      $ zapzi list | ls [-f FOLDER] [-l | --long]
+        Lists articles in FOLDER, one line per article. The -l option shows
+        a more detailed listing.
 
       $ zapzi list-folders | lsf
         Lists a summary of all folders.

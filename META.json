@@ -38,6 +38,7 @@
          "requires" : {
             "Browser::Open" : "0",
             "Carp" : "0",
+            "Cwd" : "0",
             "DBIx::Class::Core" : "0",
             "DBIx::Class::Schema" : "0",
             "Data::Validate::URI" : "0.06",
@@ -93,6 +94,6 @@
          "web" : "https://github.com/rupertl/app-zapzi"
       }
    },
-   "version" : "0.008"
+   "version" : "0.009"
 }
 

@@ -26,7 +26,7 @@ sub test_schema
     subtest 'Article' => sub
     {
         ZapziTestSchema->test($schema, 'Article',
-                              [ qw(id title folder created) ],
+                              [ qw(id title folder created source) ],
                               [ qw(folder article_text) ]);
     };
 
@@ -65,4 +65,7 @@ sub test_upgrade
 
     is( $app->database->get_version, $app->database->schema->schema_version,
         'Upgraded database to latest version' );
+
+    note("Now testing the upgraded database against the current schema");
+    test_schema($app);
 }

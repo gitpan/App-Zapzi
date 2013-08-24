@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.008'; # VERSION
+our $VERSION = '0.009'; # VERSION
 
 use Carp;
 use Data::Validate::URI 0.06;
@@ -92,7 +92,7 @@ App::Zapzi::Fetchers::URL - fetch article via URL
 
 =head1 VERSION
 
-version 0.008
+version 0.009
 
 =head1 DESCRIPTION
 

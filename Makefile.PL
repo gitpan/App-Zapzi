@@ -24,6 +24,7 @@ my %WriteMakefileArgs = (
   "PREREQ_PM" => {
     "Browser::Open" => 0,
     "Carp" => 0,
+    "Cwd" => 0,
     "DBIx::Class::Core" => 0,
     "DBIx::Class::Schema" => 0,
     "Data::Validate::URI" => "0.06",
@@ -62,7 +63,7 @@ my %WriteMakefileArgs = (
     "Test::Most" => 0,
     "Test::Output" => 0
   },
-  "VERSION" => "0.008",
+  "VERSION" => "0.009",
   "test" => {
     "TESTS" => "t/*.t"
   }

@@ -5,7 +5,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.008'; # VERSION
+our $VERSION = '0.009'; # VERSION
 
 binmode(STDOUT, ":encoding(UTF-8)");
 
@@ -30,6 +30,9 @@ has force => (is => 'rw', default => 0);
 
 
 has noarchive => (is => 'rw', default => 0);
+
+
+has long => (is => 'rw', default => 0);
 
 
 has folder => (is => 'rw', default => 'Inbox');
@@ -110,12 +113,14 @@ sub process_args
         Param("transformer|t"),
         Switch("force"),
         Switch("noarchive"),
+        Switch("long|l"),
     );
 
     my $options = Getopt::Lucid->getopt(\@specs, \@args)->validate;
 
     $self->force($options->get_force);
     $self->noarchive($options->get_noarchive);
+    $self->long($options->get_long);
     $self->folder($options->get_folder // $self->folder);
     $self->transformer($options->get_transformer // $self->transformer);
 
@@ -149,7 +154,7 @@ sub process_args
     $self->make_folder(@args) if $options->get_make_folder;
     $self->delete_folder(@args) if $options->get_delete_folder;
     $self->delete_article(@args) if $options->get_delete_article;
-    $self->add(@args) if $options->get_add;
+    @args = $self->add(@args) if $options->get_add;
     $self->show('browser', @args) if $options->get_show;
     $self->show('stdout', @args) if $options->get_export;
     $self->publish if $options->get_publish;
@@ -208,9 +213,23 @@ sub list
     foreach (@$summary)
     {
         my $article = $_;
-        printf("%s %4d %s %-45s\n", $self->folder,
-               $article->{id}, $article->{created}->strftime('%d-%b-%Y'),
-               $article->{title});
+        if ($self->long)
+        {
+            print "Folder:  ", $self->folder, "\n";
+            print "ID:      ", $article->{id}, "\n";
+            print "Title:   ", $article->{title}, "\n";
+            print "Source:  ", $article->{source}, "\n";
+            print "Created: ",
+                  $article->{created}->strftime('%d-%b-%Y %H:%M:%S'), "\n";
+            printf("Size:    %.1fkb\n", length($article->{text}) / 1024);
+            print "\n";
+        }
+        else
+        {
+            printf("%s %4d %s %-45s\n", $self->folder,
+                   $article->{id}, $article->{created}->strftime('%d-%b-%Y'),
+                   $article->{title});
+        }
     }
     $self->run(0);
 }
@@ -341,6 +360,7 @@ sub add
     }
 
     $self->run(0);
+    my @article_ids;
     for (@args)
     {
         my $source = $_;
@@ -366,10 +386,17 @@ sub add
                length($tx->readable_text) / 1024);
 
         my $rs = App::Zapzi::Articles::add_article(title => $tx->title,
+                                                   source =>
+                                                       $f->validated_source,
                                                    text => $tx->readable_text,
                                                    folder => $self->folder);
         printf("Added article %d to folder '%s'\n\n", $rs->id, $self->folder);
+        push @article_ids, $rs->id;
     }
+
+    # Allow other commands in the command line to operate on the list of
+    # articles added.
+    return @article_ids;
 }
 
 
@@ -480,8 +507,9 @@ sub help
     If not specified, Zapzi will choose the best option based on the
     content type of the article.
 
-  $ zapzi list | ls [-f FOLDER]
-    Lists articles in FOLDER.
+  $ zapzi list | ls [-f FOLDER] [-l | --long]
+    Lists articles in FOLDER, one line per article. The -l option shows
+    a more detailed listing.
 
   $ zapzi list-folders | lsf
     Lists a summary of all folders.
@@ -535,7 +563,7 @@ App::Zapzi - store articles and publish them to read later
 
 =head1 VERSION
 
-version 0.008
+version 0.009
 
 =head1 DESCRIPTION
 
@@ -557,6 +585,10 @@ Option to force processing of the init command. Default is unset.
 =head2 noarchive
 
 Option to not archive articles on publication
+
+=head2 long
+
+Option to present a detailed listing
 
 =head2 folder
 

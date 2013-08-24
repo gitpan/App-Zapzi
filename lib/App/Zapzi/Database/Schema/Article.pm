@@ -5,7 +5,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.008'; # VERSION
+our $VERSION = '0.009'; # VERSION
 
 use base 'DBIx::Class::Core';
 use DateTime::Format::SQLite;
@@ -25,7 +25,9 @@ __PACKAGE__->add_columns
     { data_type => "integer", is_nullable => 0 },
     "created",
     { data_type => 'datetime', is_nullable => 0,
-      default_value => \"(datetime('now', 'localtime'))" }
+      default_value => \"(datetime('now', 'localtime'))" },
+    "source",
+    { data_type => "text", default_value => "", is_nullable => 0 },
 );
 
 
@@ -50,7 +52,7 @@ App::Zapzi::Database::Schema::Article - zapzi article table
 
 =head1 VERSION
 
-version 0.008
+version 0.009
 
 =head1 DESCRIPTION
 
@@ -84,6 +86,13 @@ database.
   Date/time article was created
   data_type: 'datetime'
   default_value: datetime('now','localtime')
+  is_nullable: 0
+
+=head2 source
+
+  Source of the article, eg filename or URL
+  data_type: 'text'
+  default_value: ''
   is_nullable: 0
 
 =head1 PRIMARY KEY

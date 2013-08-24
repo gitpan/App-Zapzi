@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.008'; # VERSION
+our $VERSION = '0.009'; # VERSION
 
 require Exporter;
 our @ISA = qw(Exporter);
@@ -52,6 +52,8 @@ sub articles_summary
     {
         push @$summary, {id => $article->id,
                         created => $article->created,
+                        source => $article->source,
+                        text => $article->article_text->text,
                         title => $article->title};
     }
 
@@ -63,14 +65,15 @@ sub add_article
 {
     my %args = @_;
 
-    croak 'Must provide title and folder'
-        unless $args{title} && $args{folder};
+    croak 'Must provide title, source and folder'
+        unless $args{title} && $args{source} && $args{folder};
 
     my $folder_rs = get_folder($args{folder});
     croak "Folder $args{folder} does not exist" unless $folder_rs;
 
     my $new_article = _articles()->create({title => $args{title},
                                            folder => $folder_rs->id,
+                                           source => $args{source},
                                            article_text =>
                                                {text => $args{text}}});
 
@@ -145,7 +148,7 @@ App::Zapzi::Articles - routines to access Zapzi articles
 
 =head1 VERSION
 
-version 0.008
+version 0.009
 
 =head1 DESCRIPTION
 
@@ -164,7 +167,7 @@ Returns the resultset for the article identified by C<id>.
 =head2 articles_summary(folder)
 
 Return a summary of articles in C<folder> as a list of articles, each
-item being a hash ref with keys id, created and title.
+item being a hash ref with keys id, created, source, text and title.
 
 =head2 add_article(args)
 
@@ -173,6 +176,8 @@ Adds a new article. C<args> is a hash that must contain
 =over 4
 
 =item * C<title> - title of the article
+
+=item * C<source> - source, eg file or URL, of the article
 
 =item * C<folder> - name of the folder to store it in
 

@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.008'; # VERSION
+our $VERSION = '0.009'; # VERSION
 
 use Module::Find 0.11;
 our @_plugins;
@@ -18,6 +18,9 @@ use Moo;
 
 
 has source => (is => 'ro', default => '');
+
+
+has validated_source => (is => 'rwp', default => '');
 
 
 has fetcher => (is => 'rwp', default => '');
@@ -44,6 +47,7 @@ sub fetch
         if (defined $valid_source)
         {
             $module = $plugin->new(source => $valid_source);
+            $self->_set_validated_source($valid_source);
             last;
         }
     }
@@ -81,7 +85,7 @@ App::Zapzi::FetchArticle - routines to get articles for Zapzi
 
 =head1 VERSION
 
-version 0.008
+version 0.009
 
 =head1 DESCRIPTION
 
@@ -93,6 +97,11 @@ and returns the raw HTML or text.
 =head2 source
 
 Pass in the source of the article - either a filename or a URL.
+
+=head2 validated_source
+
+The actual source used to fetch the article, eg the full filename
+derived from the partial filename passed in to source.
 
 =head2 fetcher
 

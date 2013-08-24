@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use App::Zapzi;
-our $VERSION = '0.008'; # VERSION
+our $VERSION = '0.009'; # VERSION
 # ABSTRACT: a tool to store articles and publish them as eBooks to read later
 # PODNAME: zapzi
 
@@ -22,7 +22,7 @@ zapzi - a tool to store articles and publish them as eBooks to read later
 
 =head1 VERSION
 
-version 0.008
+version 0.009
 
 =head1 SYNOPSIS
 
@@ -135,6 +135,8 @@ To see a summary of a particular folder, use C<list> or C<ls>:
   $ zapzi ls -f Foo
   Foo      1 05-Jul-2013 Project readme
 
+Use the C<-l> option to C<ls> to get a more detailed listing.
+
 =head2 PUBLISHING
 
 To create an eBook, run C<zapzi publish> or C<zapzi pub>. By default
@@ -147,10 +149,19 @@ sub-directory of your Zapzi directory, eg C<~/.zapzi/ebooks>.
 When you publish a folder, the articles are moved to the Archive
 folder unless you set the C<--noarchive> option.
 
+=head2 SHOWING AND EXPORTING
+
 Instead of publishing, if you want to see a copy of an article use
 C<zapzi show> to view the article in a browser or C<zapzi export> to
-send a copyof the readable article to the standard output. Both these
+send a copy of the readable article to the standard output. Both these
 commands will not archive the article.
+
+You can chain together adding and showing, eg
+
+  $ zapzi add show README.md
+
+will add a copy of README.md to the database and then open a browser
+to show how it looks in readable format.
 
 =encoding utf8
 
@@ -210,8 +221,9 @@ pronounced ZAAP-zi in Cantonese.
     If not specified, Zapzi will choose the best option based on the
     content type of the article.
 
-  $ zapzi list | ls [-f FOLDER]
-    Lists articles in FOLDER.
+  $ zapzi list | ls [-f FOLDER] [-l | --long]
+    Lists articles in FOLDER, one line per article. The -l option shows
+    a more detailed listing.
 
   $ zapzi list-folders | lsf
     Lists a summary of all folders.

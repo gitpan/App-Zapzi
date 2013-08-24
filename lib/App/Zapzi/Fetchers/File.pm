@@ -6,10 +6,11 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.008'; # VERSION
+our $VERSION = '0.009'; # VERSION
 
 use Carp;
 use File::MMagic 1.30;
+use Cwd;
 use Moo;
 
 with 'App::Zapzi::Roles::Fetcher';
@@ -26,7 +27,7 @@ sub handles
     my $self = shift;
     my $source = shift;
 
-    return -r $source ? $source : undef;
+    return (-r $source && -s $source) ? Cwd::realpath($source) : undef;
 }
 
 
@@ -80,7 +81,7 @@ App::Zapzi::Fetchers::File - fetch article from a file
 
 =head1 VERSION
 
-version 0.008
+version 0.009
 
 =head1 DESCRIPTION
 
