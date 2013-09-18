@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.009'; # VERSION
+our $VERSION = '0.010'; # VERSION
 
 use Carp;
 use File::MMagic 1.30;
@@ -81,7 +81,7 @@ App::Zapzi::Fetchers::File - fetch article from a file
 
 =head1 VERSION
 
-version 0.009
+version 0.010
 
 =head1 DESCRIPTION
 

@@ -44,6 +44,7 @@
             "Data::Validate::URI" : "0.06",
             "DateTime" : "0",
             "DateTime::Format::SQLite" : "0",
+            "EBook::EPUB" : "0.6",
             "EBook::MOBI" : "0.65",
             "Encode" : "0",
             "Exporter" : "0",
@@ -56,6 +57,7 @@
             "HTML::Element" : "0",
             "HTML::Entities" : "0",
             "HTML::ExtractMain" : "0.63",
+            "HTML::TreeBuilder" : "0",
             "HTTP::CookieJar" : "0",
             "HTTP::Tiny" : "0",
             "Module::Find" : "0.11",
@@ -94,6 +96,6 @@
          "web" : "https://github.com/rupertl/app-zapzi"
       }
    },
-   "version" : "0.009"
+   "version" : "0.010"
 }
 

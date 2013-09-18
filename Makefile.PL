@@ -30,6 +30,7 @@ my %WriteMakefileArgs = (
     "Data::Validate::URI" => "0.06",
     "DateTime" => 0,
     "DateTime::Format::SQLite" => 0,
+    "EBook::EPUB" => "0.6",
     "EBook::MOBI" => "0.65",
     "Encode" => 0,
     "Exporter" => 0,
@@ -42,6 +43,7 @@ my %WriteMakefileArgs = (
     "HTML::Element" => 0,
     "HTML::Entities" => 0,
     "HTML::ExtractMain" => "0.63",
+    "HTML::TreeBuilder" => 0,
     "HTTP::CookieJar" => 0,
     "HTTP::Tiny" => 0,
     "Module::Find" => "0.11",
@@ -63,7 +65,7 @@ my %WriteMakefileArgs = (
     "Test::Most" => 0,
     "Test::Output" => 0
   },
-  "VERSION" => "0.009",
+  "VERSION" => "0.010",
   "test" => {
     "TESTS" => "t/*.t"
   }

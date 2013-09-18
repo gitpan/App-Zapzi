@@ -5,7 +5,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.009'; # VERSION
+our $VERSION = '0.010'; # VERSION
 
 binmode(STDOUT, ":encoding(UTF-8)");
 
@@ -39,6 +39,12 @@ has folder => (is => 'rw', default => 'Inbox');
 
 
 has transformer => (is => 'rw', default => '');
+
+
+has format => (is => 'rw', default => 'MOBI');
+
+
+has encoding => (is => 'rw');
 
 
 our $_the_app;
@@ -111,6 +117,8 @@ sub process_args
 
         Param("folder|f"),
         Param("transformer|t"),
+        Param("format|fmt"),
+        Param("encoding|enc"),
         Switch("force"),
         Switch("noarchive"),
         Switch("long|l"),
@@ -123,6 +131,8 @@ sub process_args
     $self->long($options->get_long);
     $self->folder($options->get_folder // $self->folder);
     $self->transformer($options->get_transformer // $self->transformer);
+    $self->format($options->get_format // $self->format);
+    $self->encoding($options->get_encoding // $self->encoding);
 
     $self->help if $options->get_help;
     $self->version if $options->get_version;
@@ -472,6 +482,8 @@ sub publish
 
     my $pub = App::Zapzi::Publish->
         new(folder => $self->folder,
+            format => $self->format,
+            encoding => $self->encoding,
             archive_folder => $self->noarchive ? undef : 'Archive');
 
     if (! $pub->publish())
@@ -529,9 +541,11 @@ sub help
   $ zapzi show | view ID
     Opens a browser to view the readable text of article ID
 
-  $ zapzi publish | pub [-f FOLDER] [--noarchive]
-    Publishes articles in FOLDER to an eBook. Will archive articles unless
-    --noarchive is set.
+  $ zapzi publish | pub [-f FOLDER] [--format FORMAT]
+                        [--encoding ENC] [--noarchive]
+    Publishes articles in FOLDER to an eBook.
+    Format can be specified as MOBI, EPUB or HTML.
+    Will archive articles unless --noarchive is set.
 EOF
 
     $self->run(0);
@@ -563,7 +577,7 @@ App::Zapzi - store articles and publish them to read later
 
 =head1 VERSION
 
-version 0.009
+version 0.010
 
 =head1 DESCRIPTION
 
@@ -599,6 +613,17 @@ Folder to work on. Default is 'Inbox'
 Transformer to extract text from the article. Default is '', which
 means Zapzi will automatically the best option based on the content
 type of the text.
+
+=head2 format
+
+Format to publish a collection of folder articles in. Default is MOBI;
+EPUB and HTML are other valid options.
+
+=head2 encoding
+
+Encoding to publish a collection of folder articles in. Zapzi will
+select the best encoding for the content and publication format if not
+specified.
 
 =head2 zapzi_dir
 

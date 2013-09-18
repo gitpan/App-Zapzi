@@ -23,7 +23,11 @@ lib/App/Zapzi/Fetchers/POD.pm
 lib/App/Zapzi/Fetchers/URL.pm
 lib/App/Zapzi/Folders.pm
 lib/App/Zapzi/Publish.pm
+lib/App/Zapzi/Publishers/EPUB.pm
+lib/App/Zapzi/Publishers/HTML.pm
+lib/App/Zapzi/Publishers/MOBI.pm
 lib/App/Zapzi/Roles/Fetcher.pm
+lib/App/Zapzi/Roles/Publisher.pm
 lib/App/Zapzi/Roles/Transformer.pm
 lib/App/Zapzi/Transform.pm
 lib/App/Zapzi/Transformers/HTML.pm
@@ -51,6 +55,7 @@ t/release-test-version.t
 t/testfiles/html-fragment.html
 t/testfiles/html-no-title.html
 t/testfiles/html-two-titles.html
+t/testfiles/html-utf8.html
 t/testfiles/sample.html
 t/testfiles/sample.pm
 t/testfiles/sample.txt
