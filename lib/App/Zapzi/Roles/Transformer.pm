@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.010'; # VERSION
+our $VERSION = '0.011'; # VERSION
 
 use Carp;
 use App::Zapzi::FetchArticle;
@@ -41,7 +41,7 @@ App::Zapzi::Roles::Transformer - role definition for transformer modules
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 DESCRIPTION
 

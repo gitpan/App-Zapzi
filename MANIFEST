@@ -35,6 +35,7 @@ lib/App/Zapzi/Transformers/HTMLExtractMain.pm
 lib/App/Zapzi/Transformers/POD.pm
 lib/App/Zapzi/Transformers/TextMarkdown.pm
 lib/App/Zapzi/Transformers/_Default.pm
+lib/App/Zapzi/UserConfig.pm
 t/00-compile.t
 t/01-database.t
 t/02-folders.t

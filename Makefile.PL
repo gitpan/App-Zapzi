@@ -46,12 +46,14 @@ my %WriteMakefileArgs = (
     "HTML::TreeBuilder" => 0,
     "HTTP::CookieJar" => 0,
     "HTTP::Tiny" => 0,
+    "IO::Interactive" => 0,
     "Module::Find" => "0.11",
     "Moo" => "1.003000",
     "Moo::Role" => 0,
     "Pod::Find" => 0,
     "Pod::Html" => 0,
     "SQL::Translator" => 0,
+    "Term::Prompt" => "1.04",
     "Text::Markdown" => 0,
     "base" => 0,
     "strict" => 0,
@@ -59,13 +61,15 @@ my %WriteMakefileArgs = (
     "warnings" => 0
   },
   "TEST_REQUIRES" => {
-    "File::Find" => 0,
+    "File::Spec" => 0,
+    "IO::Handle" => 0,
+    "IPC::Open3" => 0,
     "Test::DBIx::Class::Schema" => 0,
     "Test::More" => 0,
     "Test::Most" => 0,
     "Test::Output" => 0
   },
-  "VERSION" => "0.010",
+  "VERSION" => "0.011",
   "test" => {
     "TESTS" => "t/*.t"
   }

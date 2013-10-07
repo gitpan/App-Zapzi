@@ -3,7 +3,9 @@ abstract: 'a tool to store articles and publish them as eBooks to read later'
 author:
   - 'Rupert Lane <rupert@rupert-lane.org>'
 build_requires:
-  File::Find: 0
+  File::Spec: 0
+  IO::Handle: 0
+  IPC::Open3: 0
   Test::DBIx::Class::Schema: 0
   Test::More: 0
   Test::Most: 0
@@ -11,7 +13,7 @@ build_requires:
 configure_requires:
   ExtUtils::MakeMaker: 6.30
 dynamic_config: 0
-generated_by: 'Dist::Zilla version 4.300035, CPAN::Meta::Converter version 2.131560'
+generated_by: 'Dist::Zilla version 4.300039, CPAN::Meta::Converter version 2.132661'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -47,12 +49,14 @@ requires:
   HTML::TreeBuilder: 0
   HTTP::CookieJar: 0
   HTTP::Tiny: 0
+  IO::Interactive: 0
   Module::Find: 0.11
   Moo: 1.003000
   Moo::Role: 0
   Pod::Find: 0
   Pod::Html: 0
   SQL::Translator: 0
+  Term::Prompt: 1.04
   Text::Markdown: 0
   base: 0
   perl: 5.010
@@ -63,4 +67,4 @@ resources:
   bugtracker: https://github.com/rupertl/app-zapzi/issues
   homepage: https://metacpan.org/release/App-Zapzi
   repository: git://github.com/rupertl/app-zapzi.git
-version: 0.010
+version: 0.011

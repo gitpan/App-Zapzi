@@ -6,6 +6,7 @@ use ZapziTestDatabase;
 
 use App::Zapzi;
 use App::Zapzi::Config;
+use App::Zapzi::UserConfig;
 
 test_can();
 
@@ -15,12 +16,19 @@ test_get();
 test_set();
 test_get_keys();
 test_delete();
+test_userconfig_init();
+test_userconfig_data();
+test_userconfig_get();
+test_userconfig_set();
 
 done_testing();
 
 sub test_can
 {
-    can_ok( 'App::Zapzi::Config', qw(get set get_keys delete) );
+    can_ok( 'App::Zapzi::Config',
+            qw(get set get_keys delete) );
+    can_ok( 'App::Zapzi::UserConfig',
+            qw(get set get_doc get_user_configurable_keys) );
 }
 
 sub test_get
@@ -81,4 +89,92 @@ sub test_delete
 
     eval { App::Zapzi::Config::delete() };
     like( $@, qr/Key not provided/, 'Key has to be provided to delete' );
+}
+
+sub test_userconfig_init
+{
+    ok( $app->init_config(), 'Initialised user config variables' );
+}
+
+sub test_userconfig_data
+{
+    like( App::Zapzi::UserConfig::get_description('publish_format'),
+          qr/^Format to publish eBooks in/,
+          'Get description of user config variable' );
+
+    like( App::Zapzi::UserConfig::get_options('publish_format'),
+          qr/^EPUB, MOBI/,
+          'Get valid options for user config variable' );
+
+    like( App::Zapzi::UserConfig::get_default('publish_format'),
+          qr/^MOBI$/,
+          'Get default for user config variable' );
+
+    is( ref(App::Zapzi::UserConfig::get_validater('publish_format')),
+        'CODE',
+        'Get validater sub for user config variable' );
+
+    like( App::Zapzi::UserConfig::get_doc('publish_format'),
+          qr/# Format to publish eBooks in.\n# Options: EPUB, /mi,
+          'Got documentation for a user config variable' );
+
+    is( App::Zapzi::UserConfig::get_doc('nosuch'), undef,
+        'Nonexistent variables have no documentation' );
+
+    is( App::Zapzi::UserConfig::get_doc('schema_version'), undef,
+        'Non-user config variables have no documentation' );
+
+    eval { App::Zapzi::UserConfig::get_doc() };
+    like( $@, qr/Key not provided/, 'Key has to be provided to get_doc' );
+
+    ok( App::Zapzi::UserConfig::get_user_configurable_keys(),
+        'Can get user configurable keys list' );
+
+    ok( App::Zapzi::UserConfig::get_user_init_configurable_keys(),
+        'Can get user init configurable keys list' );
+}
+
+sub test_userconfig_get
+{
+    ok( App::Zapzi::UserConfig::get('publish_format'),
+        'Can read a defined config value' );
+
+    is( App::Zapzi::UserConfig::get('no_such_key'), undef,
+        'An nonexistent config key gives undef as value' );
+
+    is( App::Zapzi::UserConfig::get('schema_version'), undef,
+        'Non-user config variables cannot be got' );
+
+    eval { App::Zapzi::UserConfig::get() };
+    like( $@, qr/Key not provided/, 'Key has to be provided to get' );
+
+    eval { App::Zapzi::UserConfig::get('') };
+    like( $@, qr/Key not provided/, 'Non-empty key has to be provided to get' );
+}
+
+sub test_userconfig_set
+{
+    ok( App::Zapzi::UserConfig::set('publish_format', 'MOBI'),
+        'Can set publish_format to a valid value' );
+
+    ok( App::Zapzi::UserConfig::set('publish_encoding', 'UTF-8'),
+        'Can set publish_encoding to a valid value' );
+
+    is( App::Zapzi::UserConfig::set('publish_format', 'mobi'), 'MOBI',
+        'Validate canonicalises inputs' );
+
+    is( App::Zapzi::UserConfig::set('publish_format', 'invalid'), undef,
+        'Cannot set publish_format to an invalid value' );
+
+    is( App::Zapzi::UserConfig::set('nonesuch', 'abc'), undef,
+        'Undefined keys lead to undef output' );
+
+    is( App::Zapzi::UserConfig::set('schema_version', 333), undef,
+        'Cannot set non-user configurable variables' );
+
+    eval { App::Zapzi::UserConfig::set() };
+    like( $@, qr/need to be provided/, 'Key has to be provided to validate' );
+
+    eval { App::Zapzi::UserConfig::set('abc') };
+    like( $@, qr/need to be provided/, 'Value has to be provided to validate' );
 }

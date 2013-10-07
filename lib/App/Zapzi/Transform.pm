@@ -1,12 +1,12 @@
 package App::Zapzi::Transform;
-# ABSTRACT: routines to transform Zapzi articles to readble HTML
+# ABSTRACT: routines to transform Zapzi articles to readable HTML
 
 
 use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.010'; # VERSION
+our $VERSION = '0.011'; # VERSION
 
 use Module::Find 0.11;
 our @_plugins;
@@ -78,11 +78,11 @@ __END__
 
 =head1 NAME
 
-App::Zapzi::Transform - routines to transform Zapzi articles to readble HTML
+App::Zapzi::Transform - routines to transform Zapzi articles to readable HTML
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 DESCRIPTION
 

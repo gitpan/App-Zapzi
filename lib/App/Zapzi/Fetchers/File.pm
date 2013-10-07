@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.010'; # VERSION
+our $VERSION = '0.011'; # VERSION
 
 use Carp;
 use File::MMagic 1.30;
@@ -81,7 +81,7 @@ App::Zapzi::Fetchers::File - fetch article from a file
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 DESCRIPTION
 
@@ -95,7 +95,7 @@ Name of transformer visible to user.
 
 =head2 handles($content_type)
 
-Returns a valide filename if this module handles the given content-type
+Returns a valid filename if this module handles the given content-type
 
 =head2 fetch
 

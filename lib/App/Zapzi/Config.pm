@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.010'; # VERSION
+our $VERSION = '0.011'; # VERSION
 
 use App::Zapzi;
 use Carp;
@@ -83,7 +83,7 @@ App::Zapzi::Config - routines to access Zapzi configuration
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 DESCRIPTION
 
@@ -102,7 +102,7 @@ Set the config parameter C<key> to C<value>.
 =head2 delete(key)
 
 Delete the config item identified by C<key>. If the key does not exist
-then ignore the reques.
+then ignore the request.
 
 =head2 get_keys
 

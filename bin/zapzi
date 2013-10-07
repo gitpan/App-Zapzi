@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use App::Zapzi;
-our $VERSION = '0.010'; # VERSION
+our $VERSION = '0.011'; # VERSION
 # ABSTRACT: a tool to store articles and publish them as eBooks to read later
 # PODNAME: zapzi
 
@@ -22,12 +22,15 @@ zapzi - a tool to store articles and publish them as eBooks to read later
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 
   $ zapzi init
   Created Zapzi directory ~/.zapzi
+
+  Select configuration options. Press enter to accept defaults.
+  Format to publish eBooks in. (EPUB, MOBI or HTML) [default MOBI] : MOBI
 
   $ zapzi add ~/src/foo/README.txt
   Added article 2 to folder Inbox
@@ -70,15 +73,22 @@ articles are archived so you can retrieve them later if needed.
 
 =back
 
-=head2 CONFIGURATION
+=head2 SETUP
 
-Zapzi needs very little configuration to get running - just type
+To get started, type:
 
   $ zapzi init
 
 and it will create a directory (by default ~/.zapzi) to store its
 database and files. You can override this directory by setting the
 environment variable C<ZAPZI_DIR>.
+
+Zapzi will then prompt for configuration options such as preferred
+format for publishing eBooks. If you run this command
+non-interactively it will use defaults.
+
+To view or change these options see L<CONFIGURATION> for further
+details.
 
 =head2 ADDING ARTICLES
 
@@ -136,6 +146,12 @@ To see a summary of a particular folder, use C<list> or C<ls>:
   Foo      1 05-Jul-2013 Project readme
 
 Use the C<-l> option to C<ls> to get a more detailed listing.
+
+You can delete articles with C<zapzi rm> and move articles between
+folders with C<zapzi mv>, for example:
+
+  $ zapzi rm 10                 # remove article 10 from the database
+  $ zapzi mv 12 13 Foo          # move articles 12 and 13 to folder Foo
 
 =head2 PUBLISHING
 
@@ -219,6 +235,33 @@ copy to an eReader.
 Zapzi comes from the Chinese word 雜誌, meaning magazine. It is
 pronounced ZAAP-zi in Cantonese.
 
+=head1 CONFIGURATION
+
+To view or change configuration variables use the C<config get> or
+C<config set> commands, eg:
+
+  $ zapzi config get                      # to see all set variables
+  $ zapzi config get publish_format       # to see one variable
+  $ zapzi config set publish_format EPUB  # to set a variable
+
+The following configuration variables are available
+
+=over 4
+
+=item publish_format
+
+The eBook format Zapzi will use when running the C<publish> command.
+Default is MOBI; can be set to EPUB or HTML.
+
+=item publish_encoding
+
+The encoding used to create an eBook when running the C<publish>
+command. Default is unset, which means Zapzi will choose the best
+encoding for the publication format. Can be set to UTF-8 or
+ISO-8859-1.
+
+=back
+
 =head1 USAGE
 
   $ zapzi help | h
@@ -230,6 +273,13 @@ pronounced ZAAP-zi in Cantonese.
   $ zapzi init [--force]
     Initialises new zapzi database. Will not create a new database
     if one exists already unless you set --force.
+
+  $ zapzi config get [KEYS]
+    Prints configuration variables specified by KEYS, or all config
+    variables if KEYS not provided.
+
+  $ zapzi config set KEY VALUE
+    Set configuration variable KEY to VALUE.
 
   $ zapzi add [-t TRANSFORMER] FILE | URL | POD
     Adds article to database. Accepts multiple file names or URLs.
@@ -253,6 +303,9 @@ pronounced ZAAP-zi in Cantonese.
 
   $ zapzi delete-article | delete | rm ID
     Removes article ID.
+
+  $ zapzi move | mv ARTICLES FOLDER
+    Move one or more articles to the given folder
 
   $ zapzi export | cat ID
     Prints content of readable article to STDOUT

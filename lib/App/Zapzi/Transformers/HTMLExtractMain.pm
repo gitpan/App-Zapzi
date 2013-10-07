@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.010'; # VERSION
+our $VERSION = '0.011'; # VERSION
 
 use HTML::ExtractMain 0.63;
 use Moo;
@@ -53,7 +53,7 @@ App::Zapzi::Transformers::HTMLExtractMain - transform text using HTMLExtractMain
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 DESCRIPTION
 

@@ -1,12 +1,12 @@
 package App::Zapzi::Roles::Publisher;
-# ABSTRACT: role definition for publusher modules
+# ABSTRACT: role definition for publisher modules
 
 
 use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.010'; # VERSION
+our $VERSION = '0.011'; # VERSION
 
 use Carp;
 use Moo::Role;
@@ -40,11 +40,11 @@ __END__
 
 =head1 NAME
 
-App::Zapzi::Roles::Publisher - role definition for publusher modules
+App::Zapzi::Roles::Publisher - role definition for publisher modules
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 DESCRIPTION
 

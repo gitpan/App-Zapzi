@@ -6,11 +6,13 @@ use lib qw(t/lib);
 use ZapziTestDatabase;
 
 use App::Zapzi;
+use File::Slurp;
 
 test_init();
 
 my ($test_dir, $app) = ZapziTestDatabase::get_test_app();
 
+test_config();
 test_list();
 test_list_folders();
 test_make_folder();
@@ -18,6 +20,7 @@ test_delete_folder();
 test_export();
 test_add();
 test_delete_article();
+test_move_article();
 test_publish();
 test_publish_archive();
 test_help_version();
@@ -35,6 +38,84 @@ sub get_test_app
 sub test_init
 {
     ZapziTestDatabase::test_init();
+}
+
+sub test_config
+{
+    my $app = get_test_app();
+
+    # get all
+    stdout_like( sub { $app->process_args(qw(config get)) },
+                 qr/# Format to publish.*publish_format = /s,
+                 'config get' );
+    ok( ! $app->run, 'config get run' );
+
+    # get single
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(config get publish_format)) },
+                 qr/MOBI/,
+                 'config get single' );
+    ok( ! $app->run, 'config get single run' );
+
+    # get nonesuch
+    stdout_like( sub { $app->process_args(qw(config get nonesuch)) },
+                 qr/Config variable 'nonesuch' does not exist/,
+                 'config get nonesuch' );
+    ok( $app->run, 'config get nonesuch run' );
+
+    # set valid
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(config set publish_format epub)) },
+                 qr/Set 'publish_format' = 'EPUB'/,
+                 'config set valid' );
+    ok( ! $app->run, 'config set valid run' );
+
+    # set invalid
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(config set publish_format XXX)) },
+                 qr/Invalid/,
+                 'config set invalid' );
+    ok( $app->run, 'config set invalid run' );
+
+    # set nonesuch
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(config set nonesuch xxx)) },
+                 qr/Invalid/,
+                 'config set nonesuch' );
+    ok( $app->run, 'config set nonesuch run' );
+
+    # set wrong number of args
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(config set)) },
+                 qr/Invalid config set command/,
+                 'config set wrong number of args 0' );
+    ok( $app->run, 'config set wrong number of args 0 run' );
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(config set publish_format)) },
+                 qr/Invalid config set command/,
+                 'config set wrong number of args 1' );
+    ok( $app->run, 'config set wrong number of args 1 run' );
+
+    # get previously set
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(config get publish_format)) },
+                 qr/EPUB/,
+                 'config get previously set' );
+    ok( ! $app->run, 'config previously set run' );
+
+    # set valid change
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(config set publish_format mobi)) },
+                 qr/Set 'publish_format' = 'MOBI'/,
+                 'config set valid change' );
+    ok( ! $app->run, 'config set valid change run' );
+
+    # get previously changed
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(config get publish_format)) },
+                 qr/MOBI/,
+                 'config get previously changed' );
+    ok( ! $app->run, 'config previously changed run' );
 }
 
 sub test_list
@@ -211,12 +292,92 @@ sub test_delete_article
     ok( $app->run, 'rm run' );
 }
 
+sub test_move_article
+{
+    my $app = get_test_app();
+
+    # Set up two folders
+    $app->process_args(qw(mkf ma));
+    $app->process_args(qw(mkf mb));
+
+    # Set up two articles in folder ma
+    my $stdout = Test::Output::stdout_from(
+        sub { $app->process_args(qw(add -f ma t/testfiles/sample.html)) });
+    my $article1;
+    if ($stdout =~ /Added article (\d+) to folder 'ma'/)
+    {
+        $article1 = $1;
+    }
+    ok( $article1, 'Added first test article for move' );
+
+    $app = get_test_app();
+    $stdout = Test::Output::stdout_from(
+        sub { $app->process_args(qw(add -f ma t/testfiles/sample.html)) });
+    my $article2;
+    if ($stdout =~ /Added article (\d+) to folder 'ma'/)
+    {
+        $article2 = $1;
+    }
+    ok( $article2, 'Added second test article for move' );
+
+    # Move individually to mb
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(split(/ /, "move $article1 mb")) },
+                 qr/Moved articles $article1 to 'mb'/ );
+    ok( ! $app->run, 'move 1 run' );
+    stdout_like( sub { $app->process_args(split(/ /, "move $article2 mb")) },
+                 qr/Moved articles $article2 to 'mb'/ );
+    ok( ! $app->run, 'move 2 run' );
+
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args('lsf') }, qr/mb\s+2/,
+                 'Move completed OK' );
+
+    # Move in bulk to ma
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(
+                           split(/ /, "move $article1 $article2 ma")) },
+                 qr/Moved articles $article1 $article2 to 'ma'/ );
+
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args('lsf') }, qr/mb\s+0/,
+                 'Move back completed OK' );
+
+    # No args
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(move)) },
+                 qr/Need to supply/,
+                 'Move with no args gives error' );
+    ok( $app->run, 'move no args run' );
+
+    # Bad folder
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(move 1 nonesuch)) },
+                 qr/Need to supply a valid folder/,
+                 'Move with invalid folder gives error' );
+    ok( $app->run, 'move bad folder run' );
+
+    # Missing articles
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(move mb)) },
+                 qr/Need to supply one or more article IDs/,
+                 'Move with missing article ID gives error' );
+    ok( $app->run, 'move missing article run' );
+
+    # Bad articles
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(move 99999 mb)) },
+                 qr/Could not get article/,
+                 'Move with bad article ID gives error' );
+    ok( $app->run, 'move bad article run' );
+}
+
 sub test_publish
 {
     my $app = get_test_app();
 
     stdout_like( sub { $app->process_args(qw(publish)) },
-                 qr/5 articles.*Published/s,
+                 qr/5 articles.*Published.*\.mobi$/s,
                  'publish' );
     ok( ! $app->run, 'publish run' );
 
@@ -234,10 +395,42 @@ sub test_publish
 
     $app = get_test_app();
     $app->process_args(qw(add t/testfiles/sample.txt));
+    $app->process_args(qw(config set publish_format epub));
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(publish)) },
+                 qr/Published .*\.epub$/,
+                 'publish as different format by config' );
+    ok( ! $app->run, 'pub format by config run' );
+
+    $app = get_test_app();
+    $app->process_args(qw(add t/testfiles/sample.txt));
     stdout_like( sub { $app->process_args(qw(publish --encoding UTF-8)) },
                  qr/Published /,
                  'publish in different encoding' );
     ok( ! $app->run, 'pub encoding run' );
+
+    $app = get_test_app();
+    $app->process_args(qw(add t/testfiles/sample.txt));
+    $app->process_args(qw(config set publish_encoding ISO-8859-1));
+    $app->process_args(qw(config set publish_format HTML));
+    $app = get_test_app();
+    my $stdout = Test::Output::stdout_from(sub
+                                           { $app->process_args(qw(publish)) });
+    like( $stdout,
+          qr/Published .*\.html$/,
+          'publish as different encoding by config' );
+    if ($stdout =~ /Published (.+)$/)
+    {
+        my $published_file = $1;
+        my $contents = read_file($published_file);
+        like( $contents, qr/<meta charset="ISO-8859-1">/,
+              'Contents encoded correctly for ISO-8859-1' );
+    }
+    else
+    {
+        fail('Could not read published file');
+    }
+    ok( ! $app->run, 'pub encoding by config run' );
 
     $app->process_args(qw(add t/testfiles/sample.txt));
 
@@ -258,6 +451,13 @@ sub test_publish
                  qr/Failed to publish/,
                  'publish encoding error' );
     ok( $app->run, 'publish encoding error run' );
+
+    # Publish does not take any bare arguments
+    $app = get_test_app();
+    stdout_like( sub { $app->process_args(qw(publish XXX)) },
+                 qr/Invalid .* arguments/,
+                 'publish arguments error' );
+    ok( $app->run, 'publish arguments error run' );
 }
 
 sub test_publish_archive

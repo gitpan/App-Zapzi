@@ -5,10 +5,12 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.010'; # VERSION
+our $VERSION = '0.011'; # VERSION
 
 binmode(STDOUT, ":encoding(UTF-8)");
 
+use IO::Interactive;
+use Term::Prompt 1.04;
 use Browser::Open;
 use Getopt::Lucid 1.05 qw( :all );
 use File::HomeDir;
@@ -19,6 +21,7 @@ use App::Zapzi::Articles;
 use App::Zapzi::FetchArticle;
 use App::Zapzi::Transform;
 use App::Zapzi::Publish;
+use App::Zapzi::UserConfig;
 use Moo 1.003000;
 use Carp;
 
@@ -41,7 +44,7 @@ has folder => (is => 'rw', default => 'Inbox');
 has transformer => (is => 'rw', default => '');
 
 
-has format => (is => 'rw', default => 'MOBI');
+has format => (is => 'rw');
 
 
 has encoding => (is => 'rw');
@@ -95,6 +98,13 @@ has test_database =>
 );
 
 
+has interactive =>
+(
+    is => 'ro',
+    default => sub { IO::Interactive::is_interactive(); }
+);
+
+
 sub process_args
 {
     my $self = shift;
@@ -105,6 +115,7 @@ sub process_args
         Switch("help|h"),
         Switch("version|v"),
         Switch("init"),
+        Switch("config"),
         Switch("add"),
         Switch("list|ls"),
         Switch("list-folders|lsf"),
@@ -113,6 +124,7 @@ sub process_args
         Switch("delete-article|delete|rm"),
         Switch("show|view"),
         Switch("export|cat"),
+        Switch("move|mv"),
         Switch("publish|pub"),
 
         Param("folder|f"),
@@ -131,8 +143,6 @@ sub process_args
     $self->long($options->get_long);
     $self->folder($options->get_folder // $self->folder);
     $self->transformer($options->get_transformer // $self->transformer);
-    $self->format($options->get_format // $self->format);
-    $self->encoding($options->get_encoding // $self->encoding);
 
     $self->help if $options->get_help;
     $self->version if $options->get_version;
@@ -159,6 +169,14 @@ sub process_args
         }
     }
 
+    $self->format($options->get_format //
+                  $self->format //
+                  App::Zapzi::UserConfig::get('publish_format'));
+    $self->encoding($options->get_encoding //
+                  $self->encoding //
+                  App::Zapzi::UserConfig::get('publish_encoding'));
+
+    $self->config(@args) if $options->get_config;
     $self->list if $options->get_list;
     $self->list_folders if $options->get_list_folders;
     $self->make_folder(@args) if $options->get_make_folder;
@@ -167,7 +185,8 @@ sub process_args
     @args = $self->add(@args) if $options->get_add;
     $self->show('browser', @args) if $options->get_show;
     $self->show('stdout', @args) if $options->get_export;
-    $self->publish if $options->get_publish;
+    $self->move(@args) if $options->get_move;
+    $self->publish(@args) if $options->get_publish;
 
     # Fallthrough if no valid commands given
     $self->help if $self->run == -1;
@@ -179,22 +198,125 @@ sub init
     my $self = shift;
     my $dir = $self->zapzi_dir;
 
+    $self->run(1);
+
     if (! $dir || $dir eq '')
     {
         print "Zapzi directory not supplied\n";
-        $self->run(1);
     }
     elsif (-d $dir && ! $self->force)
     {
         print "Zapzi directory $dir already exists\n";
         print "To force recreation, run with the --force option\n";
-        $self->run(1);
     }
     else
     {
         $self->database->init;
-        print "Created Zapzi directory $dir\n";
-        $self->run(0);
+        print "Created Zapzi directory $dir\n\n";
+        if ($self->init_config())
+        {
+            print "\nInitialisation completed. Type 'zapzi help' to view " .
+                "command line options\n";
+            $self->run(0);
+        }
+    }
+}
+
+
+sub init_config
+{
+    my $self = shift;
+
+    if ($self->interactive)
+    {
+        print "Select configuration options. " .
+              "Press enter to accept defaults.\n\n";
+    }
+    else
+    {
+        print "Not running interactively, so will use defaults for " .
+              "configuration variables.\n";
+        print "Use the 'zapzi config' command to view/set these later\n";
+    }
+
+    for (App::Zapzi::UserConfig::get_user_init_configurable_keys())
+    {
+        my $key = $_;
+        my $value = App::Zapzi::UserConfig::get_default($key);
+
+        if ($self->interactive)
+        {
+            $value = prompt('s', # validate by sub
+                            App::Zapzi::UserConfig::get_description($key),
+                            App::Zapzi::UserConfig::get_options($key),
+                            $value, # the default value
+                            App::Zapzi::UserConfig::get_validater($key));
+        }
+
+        return unless App::Zapzi::UserConfig::set($key, $value);
+    }
+
+    return 1;
+}
+
+
+
+sub config
+{
+    my $self = shift;
+    my @args = @_;
+    my $command = shift @args;
+
+    $self->run(0);
+    if (! $command || $command eq 'get')
+    {
+        # Get all unless keys were specified
+        @args = App::Zapzi::UserConfig::get_user_configurable_keys()
+            unless @args;
+
+        for (@args)
+        {
+            my $key = $_;
+            my $doc = App::Zapzi::UserConfig::get_doc($key);
+            if ($doc)
+            {
+                print $doc;
+                my $value = App::Zapzi::UserConfig::get($key);
+                printf("%s = %s\n\n", $key, $value ? $value : '<not set>');
+            }
+            else
+            {
+                print "Config variable '$key' does not exist\n";
+                $self->run(1);
+            }
+        }
+    }
+    elsif ($command eq 'set')
+    {
+        if (scalar(@args) != 2)
+        {
+            print "Invalid config set command - try 'set key value'\n";
+            $self->run(1);
+        }
+        else
+        {
+            # set key value
+            my ($key, $input) = @args;
+            if (my $value = App::Zapzi::UserConfig::set($key, $input))
+            {
+                print "Set '$key' = '$value'\n";
+            }
+            else
+            {
+                print "Invalid config set command '$key $input'\n";
+                $self->run(1);
+            }
+        }
+    }
+    else
+    {
+        print "Invalid config command - try 'get' or 'set'\n";
+        $self->run(1);
     }
 }
 
@@ -463,11 +585,65 @@ sub show
 }
 
 
+sub move
+{
+    my $self = shift;
+    my @args = @_;
+
+    $self->run(0);
+
+    my $folder = pop @args;
+    if (! $folder || ! App::Zapzi::Folders::get_folder($folder))
+    {
+        print "Need to supply a valid folder name as last argument\n";
+        $self->run(1);
+        return;
+    }
+
+    if (scalar(@args) < 1 || grep { /[^0-9]/ } @args)
+    {
+        print "Need to supply one or more article IDs\n";
+        $self->run(1);
+        return;
+    }
+
+    my @moved;
+    for (@args)
+    {
+        my $id = $_;
+        my $article = App::Zapzi::Articles::get_article($id);
+        if (! $article)
+        {
+            print "Could not get article $id\n";
+            $self->run(1);
+        }
+        else
+        {
+            App::Zapzi::Articles::move_article($id, $folder);
+            push @moved, $_;
+        }
+    }
+
+    if (@moved)
+    {
+        print "Moved articles @moved to '$folder'\n";
+    }
+}
+
+
 sub publish
 {
     my $self = shift;
-    $self->run(0);
+    my @args = @_;
 
+    if (@args)
+    {
+        print "Invalid publish command arguments\n";
+        $self->run(1);
+        return;
+    }
+
+    $self->run(0);
     my $articles = App::Zapzi::Articles::get_articles($self->folder);
     my $count  = $articles->count;
 
@@ -512,6 +688,13 @@ sub help
     Initialises new zapzi database. Will not create a new database
     if one exists already unless you set --force.
 
+  $ zapzi config get [KEYS]
+    Prints configuration variables specified by KEYS, or all config
+    variables if KEYS not provided.
+
+  $ zapzi config set KEY VALUE
+    Set configuration variable KEY to VALUE.
+
   $ zapzi add [-t TRANSFORMER] FILE | URL | POD
     Adds article to database. Accepts multiple file names or URLs.
     TRANSFORMER determines how to extract the text from the article
@@ -534,6 +717,9 @@ sub help
 
   $ zapzi delete-article | delete | rm ID
     Removes article ID.
+
+  $ zapzi move | mv ARTICLES FOLDER
+    Move one or more articles to the given folder
 
   $ zapzi export | cat ID
     Prints content of readable article to STDOUT
@@ -577,7 +763,7 @@ App::Zapzi - store articles and publish them to read later
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 DESCRIPTION
 
@@ -616,8 +802,7 @@ type of the text.
 
 =head2 format
 
-Format to publish a collection of folder articles in. Default is MOBI;
-EPUB and HTML are other valid options.
+Format to publish a collection of folder articles in.
 
 =head2 encoding
 
@@ -641,6 +826,11 @@ The instance of App:Zapzi::Database used by the application.
 
 If set, use an in-memory database. Used to speed up testing only.
 
+=head2 interactive
+
+If set, this is an interactive session where Zapzi can prompt the user
+for input.
+
 =head1 METHODS
 
 =head2 get_app
@@ -659,6 +849,19 @@ application.
 
 Creates the database. Will only do so if the database does not exist
 already or if the L<force> attribute is set.
+
+=head2 init_config
+
+On initialiseation, ask the user for settings for configuration
+variables. Will not ask if this is being run non-interactively.
+
+=head2 config(@args)
+
+Get or set configuration variables.
+
+If args is 'get' will list out all variables and their values. If args
+is 'get x' will list the value of variable x. If args is 'set x y'
+will set the value of x to be y.
 
 =head2 validate_folder
 
@@ -695,6 +898,10 @@ Add an article to the database for later publication.
 
 Exports article text. If C<output> is 'browser' then will start a
 browser to view the article, otherwise it will print to STDOUT.
+
+=head2 move
+
+Move one or more articles to a folder.
 
 =head2 publish
 

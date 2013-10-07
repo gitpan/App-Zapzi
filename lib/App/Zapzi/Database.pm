@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.010'; # VERSION
+our $VERSION = '0.011'; # VERSION
 
 use Moo;
 use SQL::Translator;
@@ -94,7 +94,7 @@ sub init
     $self->schema->populate('Article', \@articles);
 
     my @config = ({name => 'schema_version',
-                   value => $self->schema->schema_version});
+                   value => $self->schema->schema_version} );
     $self->schema->populate('Config', \@config);
 }
 
@@ -163,7 +163,7 @@ App::Zapzi::Database - database access for Zapzi
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 DESCRIPTION
 
