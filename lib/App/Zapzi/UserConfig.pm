@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.011'; # VERSION
+our $VERSION = '0.012'; # VERSION
 
 use Carp;
 use App::Zapzi;
@@ -36,7 +36,26 @@ our $_config_data =
                              my $enc = shift;
                              return $enc =~ /^(ISO-8859-1|UTF-8|)$/i ?
                                  uc($enc) : undef;
-                         }}
+                         }},
+
+    distribution_method => {doc => "How to disribute eBooks after publication.",
+                            options => "[Copy] to another directory, " .
+                                       "run a [Script] or do [Nothing]",
+                            init_configurable => 1,
+                            default => 'Nothing',
+                            validate => sub
+                            {
+                                my $enc = shift;
+                                return $enc =~ /^(Copy|Script|Nothing|)$/i ?
+                                    ucfirst($enc) : undef;
+                            }},
+
+    distribution_destination => {doc => "Where to disribute eBooks after " .
+                                        "publication",
+                                options => "Script name, directory",
+                                init_configurable => 0,
+                                default => undef,
+                                validate => sub { my $d = shift; return $d; }},
 };
 
 
@@ -124,7 +143,8 @@ sub _validate
 
 sub get_user_configurable_keys
 {
-    return keys %{$_config_data};
+    my @keys = sort keys %{$_config_data};
+    return @keys;
 }
 
 
@@ -146,7 +166,7 @@ App::Zapzi::UserConfig - get and set user configurable variables
 
 =head1 VERSION
 
-version 0.011
+version 0.012
 
 =head1 DESCRIPTION
 

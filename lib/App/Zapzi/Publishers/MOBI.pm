@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.011'; # VERSION
+our $VERSION = '0.012'; # VERSION
 
 use Carp;
 use Moo;
@@ -80,7 +80,7 @@ App::Zapzi::Publishers::MOBI - publishes articles to a MOBI eBook file
 
 =head1 VERSION
 
-version 0.011
+version 0.012
 
 =head1 DESCRIPTION
 

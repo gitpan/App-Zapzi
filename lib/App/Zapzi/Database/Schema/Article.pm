@@ -5,7 +5,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.011'; # VERSION
+our $VERSION = '0.012'; # VERSION
 
 use base 'DBIx::Class::Core';
 use DateTime::Format::SQLite;
@@ -52,7 +52,7 @@ App::Zapzi::Database::Schema::Article - zapzi article table
 
 =head1 VERSION
 
-version 0.011
+version 0.012
 
 =head1 DESCRIPTION
 

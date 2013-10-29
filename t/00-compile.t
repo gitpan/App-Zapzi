@@ -3,7 +3,7 @@ use warnings;
 
 # this test was generated with Dist::Zilla::Plugin::Test::Compile 2.033
 
-use Test::More  tests => 21 + ($ENV{AUTHOR_TESTING} ? 1 : 0);
+use Test::More  tests => 25 + ($ENV{AUTHOR_TESTING} ? 1 : 0);
 
 
 
@@ -17,6 +17,10 @@ my @module_files = (
     'App/Zapzi/Database/Schema/ArticleText.pm',
     'App/Zapzi/Database/Schema/Config.pm',
     'App/Zapzi/Database/Schema/Folder.pm',
+    'App/Zapzi/Distribute.pm',
+    'App/Zapzi/Distributors/Copy.pm',
+    'App/Zapzi/Distributors/Email.pm',
+    'App/Zapzi/Distributors/Script.pm',
     'App/Zapzi/FetchArticle.pm',
     'App/Zapzi/Fetchers/File.pm',
     'App/Zapzi/Fetchers/POD.pm',

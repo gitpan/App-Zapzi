@@ -46,9 +46,14 @@
             "DateTime::Format::SQLite" : "0",
             "EBook::EPUB" : "0.6",
             "EBook::MOBI" : "0.65",
+            "Email::MIME" : "1.924",
+            "Email::Sender::Simple" : "1.300006",
+            "Email::Simple" : "0",
+            "Email::Simple::Creator" : "0",
             "Encode" : "0",
             "Exporter" : "0",
             "File::Basename" : "0",
+            "File::Copy" : "0",
             "File::HomeDir" : "0",
             "File::MMagic" : "1.30",
             "File::Slurp" : "0",
@@ -60,6 +65,7 @@
             "HTML::TreeBuilder" : "0",
             "HTTP::CookieJar" : "0",
             "HTTP::Tiny" : "0",
+            "IO::All" : "0",
             "IO::Interactive" : "0",
             "Module::Find" : "0.11",
             "Moo" : "1.003000",
@@ -69,6 +75,7 @@
             "SQL::Translator" : "0",
             "Term::Prompt" : "1.04",
             "Text::Markdown" : "0",
+            "Try::Tiny" : "0",
             "base" : "0",
             "perl" : "5.010",
             "strict" : "0",
@@ -100,6 +107,6 @@
          "web" : "https://github.com/rupertl/app-zapzi"
       }
    },
-   "version" : "0.011"
+   "version" : "0.012"
 }
 
