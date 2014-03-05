@@ -4,7 +4,7 @@
       "Rupert Lane <rupert@rupert-lane.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 4.300039, CPAN::Meta::Converter version 2.132661",
+   "generated_by" : "Dist::Zilla version 5.013, CPAN::Meta::Converter version 2.133380",
    "license" : [
       "perl_5"
    ],
@@ -91,7 +91,8 @@
             "Test::DBIx::Class::Schema" : "0",
             "Test::More" : "0",
             "Test::Most" : "0",
-            "Test::Output" : "0"
+            "Test::Output" : "0",
+            "perl" : "5.010"
          }
       }
    },
@@ -107,6 +108,6 @@
          "web" : "https://github.com/rupertl/app-zapzi"
       }
    },
-   "version" : "0.012"
+   "version" : "0.013"
 }
 

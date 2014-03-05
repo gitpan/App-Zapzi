@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.012'; # VERSION
+our $VERSION = '0.013'; # VERSION
 
 use HTML::ExtractMain 0.63;
 use Moo;
@@ -38,6 +38,14 @@ sub _extract_html
     my $tree = HTML::ExtractMain::extract_main_html($raw_html,
                                                     output_type => 'tree' );
 
+    # Remove any font attributes as they rarely work as expected on
+    # eReaders - eg colours do not make sense on monochrome displays,
+    # font families will probably not exist.
+    for my $font ($tree->look_down(_tag => "font"))
+    {
+        $font->attr($_, undef) for $font->all_external_attr_names;
+    }
+
     return $tree;
 }
 
@@ -47,13 +55,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 App::Zapzi::Transformers::HTMLExtractMain - transform text using HTMLExtractMain
 
 =head1 VERSION
 
-version 0.012
+version 0.013
 
 =head1 DESCRIPTION
 
@@ -75,7 +85,7 @@ Rupert Lane <rupert@rupert-lane.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by Rupert Lane.
+This software is copyright (c) 2014 by Rupert Lane.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

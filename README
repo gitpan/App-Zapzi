@@ -3,7 +3,7 @@ NAME
     later
 
 VERSION
-    version 0.012
+    version 0.013
 
 SYNOPSIS
       $ zapzi init
@@ -216,11 +216,7 @@ SUPPORT AND DEVELOPMENT
 
       https://github.com/rupertl/app-zapzi/
 
-BUGS AND FUTURE PLANS
-    This is an early version of Zapzi and although the basic functionality
-    is there I plan to improve it further. If you have any suggestions
-    please add them to the issue tracker at Github.
-
+FUTURE PLANS
     *   Improve text extraction and formatting - complex pages may not
         render correctly or may miss sections at present
 
@@ -269,10 +265,10 @@ CONFIGURATION
 
 USAGE
       $ zapzi help | h
-        Shows this help text
+        Shows this help text.
 
       $ zapzi version | v
-        Show version information
+        Shows version information.
 
       $ zapzi init [--force]
         Initialises new zapzi database. Will not create a new database
@@ -300,22 +296,22 @@ USAGE
         Lists a summary of all folders.
 
       $ zapzi make-folder | mkf | md FOLDER
-        Make a new folder.
+        Makes a new folder.
 
       $ zapzi delete-folder | rmf | rd FOLDER
-        Remove a folder and all articles in it.
+        Removes a folder and all articles in it.
 
       $ zapzi delete-article | delete | rm ID
         Removes article ID.
 
       $ zapzi move | mv ARTICLES FOLDER
-        Move one or more articles to the given folder
+        Move one or more articles to the given folder.
 
       $ zapzi export | cat ID
-        Prints content of readable article to STDOUT
+        Prints content of readable article to STDOUT.
 
       $ zapzi show | view ID
-        Opens a browser to view the readable text of article ID
+        Opens a browser to view the readable text of article ID.
 
       $ zapzi publish | pub [-f FOLDER] [--format FORMAT]
                             [--encoding ENC] [--noarchive]
@@ -329,7 +325,7 @@ AUTHOR
     Rupert Lane <rupert@rupert-lane.org>
 
 COPYRIGHT AND LICENSE
-    This software is copyright (c) 2013 by Rupert Lane.
+    This software is copyright (c) 2014 by Rupert Lane.
 
     This is free software; you can redistribute it and/or modify it under
     the same terms as the Perl 5 programming language system itself.

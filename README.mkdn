@@ -4,7 +4,7 @@ zapzi - a tool to store articles and publish them as eBooks to read later
 
 # VERSION
 
-version 0.012
+version 0.013
 
 # SYNOPSIS
 
@@ -62,7 +62,7 @@ Zapzi will then prompt for configuration options such as preferred
 format for publishing eBooks. If you run this command
 non-interactively it will use defaults.
 
-To view or change these options see [CONFIGURATION](http://search.cpan.org/perldoc?CONFIGURATION) for further
+To view or change these options see [CONFIGURATION](https://metacpan.org/pod/CONFIGURATION) for further
 details.
 
 ## ADDING ARTICLES
@@ -81,7 +81,7 @@ page locally using your browser and then point Zapzi at the file.
 ## TRANSFORMERS
 
 By default, Zapzi will detect the file type and if it is HTML it will
-use [HTML::ExtractMain](http://search.cpan.org/perldoc?HTML::ExtractMain) to strip out non-essential parts of the page
+use [HTML::ExtractMain](https://metacpan.org/pod/HTML::ExtractMain) to strip out non-essential parts of the page
 such as menus. Other formats are treated as plain text with Markdown.
 
 You can override this by setting the `-t` option to `add`. For
@@ -184,7 +184,7 @@ will be sent via the local sendmail service on your machine; if you
 want to send by SMTP set the `EMAIL_SENDER_TRANSPORT` environment
 variable to SMTP and configure the below environment variables as
 appropriate. You can also set any other options documented by
-[Email::Sender](http://search.cpan.org/perldoc?Email::Sender).
+[Email::Sender](https://metacpan.org/pod/Email::Sender).
 
 - EMAIL\_SENDER\_TRANSPORT\_host: the name of the host to connect to;
 defaults to localhost
@@ -221,11 +221,7 @@ organisation of the module.
 
     https://github.com/rupertl/app-zapzi/
 
-# BUGS AND FUTURE PLANS
-
-This is an early version of Zapzi and although the basic functionality
-is there I plan to improve it further. If you have any suggestions
-please add them to the issue tracker at Github.
+# FUTURE PLANS
 
 - Improve text extraction and formatting - complex pages may not
 render correctly or may miss sections at present
@@ -277,10 +273,10 @@ The following configuration variables are available
 # USAGE
 
     $ zapzi help | h
-      Shows this help text
+      Shows this help text.
 
     $ zapzi version | v
-      Show version information
+      Shows version information.
 
     $ zapzi init [--force]
       Initialises new zapzi database. Will not create a new database
@@ -308,22 +304,22 @@ The following configuration variables are available
       Lists a summary of all folders.
 
     $ zapzi make-folder | mkf | md FOLDER
-      Make a new folder.
+      Makes a new folder.
 
     $ zapzi delete-folder | rmf | rd FOLDER
-      Remove a folder and all articles in it.
+      Removes a folder and all articles in it.
 
     $ zapzi delete-article | delete | rm ID
       Removes article ID.
 
     $ zapzi move | mv ARTICLES FOLDER
-      Move one or more articles to the given folder
+      Move one or more articles to the given folder.
 
     $ zapzi export | cat ID
-      Prints content of readable article to STDOUT
+      Prints content of readable article to STDOUT.
 
     $ zapzi show | view ID
-      Opens a browser to view the readable text of article ID
+      Opens a browser to view the readable text of article ID.
 
     $ zapzi publish | pub [-f FOLDER] [--format FORMAT]
                           [--encoding ENC] [--noarchive]
@@ -339,7 +335,7 @@ Rupert Lane <rupert@rupert-lane.org>
 
 # COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by Rupert Lane.
+This software is copyright (c) 2014 by Rupert Lane.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

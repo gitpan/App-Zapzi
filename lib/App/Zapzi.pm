@@ -5,7 +5,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.012'; # VERSION
+our $VERSION = '0.013'; # VERSION
 
 binmode(STDOUT, ":encoding(UTF-8)");
 
@@ -354,6 +354,21 @@ sub validate_folder
 }
 
 
+sub validate_article_ids
+{
+    my ($self, @args) = @_;
+
+    if (scalar(@args) < 1 || grep { /[^0-9]/ } @args)
+    {
+        print "Need to supply one or more article IDs\n";
+        $self->run(1);
+        return;
+    }
+
+    return 1;
+}
+
+
 sub list
 {
     my $self = shift;
@@ -463,12 +478,7 @@ sub delete_article
     my $self = shift;
     my @args = @_;
 
-    if (! @args)
-    {
-        print "Need to provide article IDs\n";
-        $self->run(1);
-        return;
-    }
+    return unless $self->validate_article_ids(@args);
 
     $self->run(0);
     for (@args)
@@ -554,12 +564,7 @@ sub show
     my $output = shift;
     my @args = @_;
 
-    if (! @args)
-    {
-        print "Need to provide article IDs\n";
-        $self->run(1);
-        return;
-    }
+    return unless $self->validate_article_ids(@args);
 
     $self->run(0);
     my $tempdir;
@@ -616,12 +621,7 @@ sub move
         return;
     }
 
-    if (scalar(@args) < 1 || grep { /[^0-9]/ } @args)
-    {
-        print "Need to supply one or more article IDs\n";
-        $self->run(1);
-        return;
-    }
+    return unless $self->validate_article_ids(@args);
 
     my @moved;
     for (@args)
@@ -728,11 +728,11 @@ sub help
     my $self = shift;
 
     print << 'EOF';
-  $ zapzi help|h
-    Shows this help text
+  $ zapzi help | h
+    Shows this help text.
 
-  $ zapzi version|v
-    Show version information
+  $ zapzi version | v
+    Shows version information.
 
   $ zapzi init [--force]
     Initialises new zapzi database. Will not create a new database
@@ -760,7 +760,7 @@ sub help
     Lists a summary of all folders.
 
   $ zapzi make-folder | mkf | md FOLDER
-    Make a new folder.
+    Makes a new folder.
 
   $ zapzi delete-folder | rmf | rd FOLDER
     Remove a folder and all articles in it.
@@ -769,13 +769,13 @@ sub help
     Removes article ID.
 
   $ zapzi move | mv ARTICLES FOLDER
-    Move one or more articles to the given folder
+    Move one or more articles to the given folder.
 
   $ zapzi export | cat ID
-    Prints content of readable article to STDOUT
+    Prints content of readable article to STDOUT.
 
   $ zapzi show | view ID
-    Opens a browser to view the readable text of article ID
+    Opens a browser to view the readable text of article ID.
 
   $ zapzi publish | pub [-f FOLDER] [--format FORMAT]
                         [--encoding ENC] [--noarchive]
@@ -809,13 +809,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 App::Zapzi - store articles and publish them to read later
 
 =head1 VERSION
 
-version 0.012
+version 0.013
 
 =head1 DESCRIPTION
 
@@ -923,6 +925,10 @@ will set the value of x to be y.
 
 Determines if the folder specified exists.
 
+=head2 validate_article_ids(@args)
+
+Determines if @args could be article IDs.
+
 =head2 list
 
 Lists out the articles in L<folder>.
@@ -977,7 +983,7 @@ Rupert Lane <rupert@rupert-lane.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by Rupert Lane.
+This software is copyright (c) 2014 by Rupert Lane.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
