@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.013'; # VERSION
+our $VERSION = '0.014'; # VERSION
 
 use HTML::ExtractMain 0.63;
 use Moo;
@@ -63,11 +63,13 @@ App::Zapzi::Transformers::HTMLExtractMain - transform text using HTMLExtractMain
 
 =head1 VERSION
 
-version 0.013
+version 0.014
 
 =head1 DESCRIPTION
 
-This class takes HTML and returns readable HTML using HTML::ExtractMain.
+This class takes HTML and returns readable HTML using
+HTML::ExtractMain. It attempts to remove text that is not part of the
+main article body, eg menus or headers.
 
 =head1 METHODS
 

@@ -32,7 +32,7 @@ my %WriteMakefileArgs = (
     "DateTime" => 0,
     "DateTime::Format::SQLite" => 0,
     "EBook::EPUB" => "0.6",
-    "EBook::MOBI" => "0.65",
+    "EBook::MOBI" => "0.69",
     "Email::MIME" => "1.924",
     "Email::Sender::Simple" => "1.300006",
     "Email::Simple" => 0,
@@ -77,7 +77,7 @@ my %WriteMakefileArgs = (
     "Test::Most" => 0,
     "Test::Output" => 0
   },
-  "VERSION" => "0.013",
+  "VERSION" => "0.014",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -94,7 +94,7 @@ my %FallbackPrereqs = (
   "DateTime" => 0,
   "DateTime::Format::SQLite" => 0,
   "EBook::EPUB" => "0.6",
-  "EBook::MOBI" => "0.65",
+  "EBook::MOBI" => "0.69",
   "Email::MIME" => "1.924",
   "Email::Sender::Simple" => "1.300006",
   "Email::Simple" => 0,

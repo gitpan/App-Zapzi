@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.013'; # VERSION
+our $VERSION = '0.014'; # VERSION
 
 use Carp;
 use Encode;
@@ -69,11 +69,12 @@ App::Zapzi::Transformers::TextMarkdown - transform text using Markdown
 
 =head1 VERSION
 
-version 0.013
+version 0.014
 
 =head1 DESCRIPTION
 
-This class takes text and returns readable HTML using Text::Markdown
+This class takes text (plain text or Markdown formatted text) and
+returns readable HTML using Text::Markdown.
 
 =head1 METHODS
 

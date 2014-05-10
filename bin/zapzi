@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use App::Zapzi;
-our $VERSION = '0.013'; # VERSION
+our $VERSION = '0.014'; # VERSION
 # ABSTRACT: a tool to store articles and publish them as eBooks to read later
 # PODNAME: zapzi
 
@@ -24,7 +24,7 @@ zapzi - a tool to store articles and publish them as eBooks to read later
 
 =head1 VERSION
 
-version 0.013
+version 0.014
 
 =head1 SYNOPSIS
 

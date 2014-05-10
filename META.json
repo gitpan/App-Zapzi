@@ -45,7 +45,7 @@
             "DateTime" : "0",
             "DateTime::Format::SQLite" : "0",
             "EBook::EPUB" : "0.6",
-            "EBook::MOBI" : "0.65",
+            "EBook::MOBI" : "0.69",
             "Email::MIME" : "1.924",
             "Email::Sender::Simple" : "1.300006",
             "Email::Simple" : "0",
@@ -108,6 +108,6 @@
          "web" : "https://github.com/rupertl/app-zapzi"
       }
    },
-   "version" : "0.013"
+   "version" : "0.014"
 }
 

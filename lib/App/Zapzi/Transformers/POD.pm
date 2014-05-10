@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.013'; # VERSION
+our $VERSION = '0.014'; # VERSION
 
 use Pod::Html;
 use File::Basename;
@@ -76,7 +76,7 @@ App::Zapzi::Transformers::POD - transform POD to HTML
 
 =head1 VERSION
 
-version 0.013
+version 0.014
 
 =head1 DESCRIPTION
 

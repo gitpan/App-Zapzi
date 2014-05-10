@@ -5,7 +5,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.013'; # VERSION
+our $VERSION = '0.014'; # VERSION
 
 binmode(STDOUT, ":encoding(UTF-8)");
 
@@ -535,7 +535,7 @@ sub add
                                             transformer => $self->transformer);
         if (! $tx->to_readable)
         {
-            print "Could not transform article\n\n";
+            print "Could not transform article: ", $tx->error, "\n\n";
             $self->run(1);
             next;
         }
@@ -817,7 +817,7 @@ App::Zapzi - store articles and publish them to read later
 
 =head1 VERSION
 
-version 0.013
+version 0.014
 
 =head1 DESCRIPTION
 

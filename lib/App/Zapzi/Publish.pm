@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.013'; # VERSION
+our $VERSION = '0.014'; # VERSION
 
 use Module::Find 0.11;
 our @_plugins;
@@ -159,7 +159,7 @@ App::Zapzi::Publish - create eBooks from Zapzi articles
 
 =head1 VERSION
 
-version 0.013
+version 0.014
 
 =head1 DESCRIPTION
 

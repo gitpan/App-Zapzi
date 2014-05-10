@@ -34,6 +34,7 @@ sub test_text
     my $tx = App::Zapzi::Transform->new(raw_article => $f);
     isa_ok( $tx, 'App::Zapzi::Transform' );
     ok( $tx->to_readable, 'Transform sample text file' );
+    ok( ! $tx->error, 'No error when transformer ran ok' );
     like( $tx->readable_text, qr/<p>No special formatting/,
           'Contents of text file OK' );
     like( $tx->title, qr/This is a sample text file/, 'Title of text file OK' );
@@ -73,6 +74,8 @@ sub test_html
     like( $tx->readable_text, qr/<h1>Lorem/, 'Contents of HTML file OK' );
     unlike( $tx->readable_text, qr/<script>/,
             'Javascript stripped from HTML file' );
+    unlike( $tx->readable_text, qr/<iframe/,
+            'iframe stripped from HTML file' );
     like( $tx->readable_text, qr/Header!/,
           'Full HTML preserved with plain HTML transformer' );
     is( $tx->title, 'Sample “HTML” Document',
@@ -163,4 +166,5 @@ sub test_missing_transformer
                                         transformer => 'Nonesuch');
     isa_ok( $tx, 'App::Zapzi::Transform' );
     ok( ! $tx->to_readable, 'Detected missing transformer' );
+    ok( $tx->error, 'Error when missing transformer' );
 }

@@ -1,12 +1,12 @@
 package App::Zapzi::Transformers::HTML;
-# ABSTRACT: transform text using HTMLExtractMain
+# ABSTRACT: process HTML without doing readability transforms
 
 
 use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.013'; # VERSION
+our $VERSION = '0.014'; # VERSION
 
 use Carp;
 use Encode;
@@ -53,7 +53,8 @@ sub transform
     return unless $tree;
 
     # Delete some elements we don't need
-    for my $element ($tree->find_by_tag_name(qw{img script noscript object}))
+    for my $element ($tree->find_by_tag_name(
+                         qw{img script noscript object iframe}))
     {
         $element->delete;
     }
@@ -120,16 +121,18 @@ __END__
 
 =head1 NAME
 
-App::Zapzi::Transformers::HTML - transform text using HTMLExtractMain
+App::Zapzi::Transformers::HTML - process HTML without doing readability transforms
 
 =head1 VERSION
 
-version 0.013
+version 0.014
 
 =head1 DESCRIPTION
 
 This class takes HTML and returns the body without doing additional
-readable transforms.
+readable transforms - so tags such as script are removed but no text
+should be changed. Use this if HTMLExtractMain does not provide the
+desired results.
 
 =head1 METHODS
 

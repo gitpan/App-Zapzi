@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.013'; # VERSION
+our $VERSION = '0.014'; # VERSION
 
 use Module::Find 0.11;
 our @_plugins;
@@ -35,6 +35,9 @@ has readable_text => (is => 'rwp', default => '');
 has title => (is => 'rwp', default => '');
 
 
+has error => (is => 'rwp', default => '');
+
+
 sub to_readable
 {
     my $self = shift;
@@ -58,13 +61,30 @@ sub to_readable
         }
     }
 
-    return unless defined $module;
+    if (! defined($module))
+    {
+        if ($self->transformer)
+        {
+            $self->_set_error("no such transformer " .
+                              $self->transformer . "\n");
+        }
+        else
+        {
+            $self->_set_error("no suitable transformer");
+        }
+
+        return;
+    }
 
     my $rc = $module->transform;
     if ($rc)
     {
         $self->_set_title($module->title);
         $self->_set_readable_text($module->readable_text);
+    }
+    else
+    {
+        $self->_set_error("error while transforming");
     }
 
     return $rc;
@@ -84,7 +104,7 @@ App::Zapzi::Transform - routines to transform Zapzi articles to readable HTML
 
 =head1 VERSION
 
-version 0.013
+version 0.014
 
 =head1 DESCRIPTION
 
@@ -109,6 +129,11 @@ Holds the readable text of the article
 =head2 title
 
 Title extracted from the article
+
+=head2 error
+
+Holds details of any errors encountered while transforming the article;
+will be blank if no errors.
 
 =head1 METHODS
 

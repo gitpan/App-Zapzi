@@ -6,12 +6,12 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.013'; # VERSION
+our $VERSION = '0.014'; # VERSION
 
 use Carp;
 use Moo;
 use App::Zapzi;
-use EBook::MOBI 0.65;
+use EBook::MOBI 0.69;           # required to drop GD dependency
 
 with 'App::Zapzi::Roles::Publisher';
 
@@ -82,7 +82,7 @@ App::Zapzi::Publishers::MOBI - publishes articles to a MOBI eBook file
 
 =head1 VERSION
 
-version 0.013
+version 0.014
 
 =head1 DESCRIPTION
 
