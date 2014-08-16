@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.014'; # VERSION
+our $VERSION = '0.015'; # VERSION
 
 use Carp;
 use App::Zapzi;
@@ -56,6 +56,16 @@ our $_config_data =
                                 init_configurable => 0,
                                 default => undef,
                                 validate => sub { my $d = shift; return $d; }},
+
+    deactivate_links => {doc => "If set, replace hyperlinks with link text",
+                                options => "Yes, No",
+                                init_configurable => 0,
+                                default => undef,
+                                validate => sub
+                                {
+                                    my $d = shift;
+                                    return $d =~ /^[yn]/i ? ucfirst($d) : undef;
+                                }},
 };
 
 
@@ -168,7 +178,7 @@ App::Zapzi::UserConfig - get and set user configurable variables
 
 =head1 VERSION
 
-version 0.014
+version 0.015
 
 =head1 DESCRIPTION
 

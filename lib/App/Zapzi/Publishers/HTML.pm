@@ -6,10 +6,10 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.014'; # VERSION
+our $VERSION = '0.015'; # VERSION
 
 use Carp;
-use File::Slurp;
+use Path::Tiny;
 use Moo;
 use App::Zapzi;
 
@@ -61,7 +61,7 @@ sub finish_publication
     print {$self->file} "</body></html>\n";
     close $self->file;
 
-    $self->_set_collection_data(scalar read_file($self->filename));
+    $self->_set_collection_data(path($self->filename)->slurp);
 
     return $self->filename;
 }
@@ -80,7 +80,7 @@ App::Zapzi::Publishers::HTML - publishes articles to a HTML file
 
 =head1 VERSION
 
-version 0.014
+version 0.015
 
 =head1 DESCRIPTION
 

@@ -6,10 +6,10 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.014'; # VERSION
+our $VERSION = '0.015'; # VERSION
 
 use Carp;
-use File::Slurp;
+use Path::Tiny;
 use Pod::Find;
 use Moo;
 
@@ -35,7 +35,7 @@ sub fetch
 {
     my $self = shift;
 
-    my $pod = read_file($self->source);
+    my $pod = path($self->source)->slurp;
     $self->_set_text($pod);
 
     $self->_set_content_type('text/pod');
@@ -57,7 +57,7 @@ App::Zapzi::Fetchers::POD - fetch article from a named POD module
 
 =head1 VERSION
 
-version 0.014
+version 0.015
 
 =head1 DESCRIPTION
 

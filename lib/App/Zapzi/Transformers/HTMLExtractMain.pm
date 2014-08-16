@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.014'; # VERSION
+our $VERSION = '0.015'; # VERSION
 
 use HTML::ExtractMain 0.63;
 use Moo;
@@ -38,6 +38,16 @@ sub _extract_html
     my $tree = HTML::ExtractMain::extract_main_html($raw_html,
                                                     output_type => 'tree' );
 
+    $self->_remove_fonts($tree);
+    $self->_optionally_deactivate_links($tree);
+
+    return $tree;
+}
+
+sub _remove_fonts
+{
+    my ($self, $tree) = @_;
+
     # Remove any font attributes as they rarely work as expected on
     # eReaders - eg colours do not make sense on monochrome displays,
     # font families will probably not exist.
@@ -45,8 +55,27 @@ sub _extract_html
     {
         $font->attr($_, undef) for $font->all_external_attr_names;
     }
+}
 
-    return $tree;
+sub _optionally_deactivate_links
+{
+    my ($self, $tree) = @_;
+
+    # Turn links into text if option was requested.
+
+    my $option = App::Zapzi::UserConfig::get('deactivate_links');
+
+    if ($option && $option =~ /^Y/i)
+    {
+        for my $a ($tree->find_by_tag_name('a'))
+        {
+            my $href = $a->attr('href');
+            if ($href && $href !~ /^#/)
+            {
+                $a->replace_with_content($a->as_text);
+            }
+        }
+    }
 }
 
 1;
@@ -63,7 +92,7 @@ App::Zapzi::Transformers::HTMLExtractMain - transform text using HTMLExtractMain
 
 =head1 VERSION
 
-version 0.014
+version 0.015
 
 =head1 DESCRIPTION
 

@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.014'; # VERSION
+our $VERSION = '0.015'; # VERSION
 
 use App::Zapzi;
 use Carp;
@@ -14,7 +14,7 @@ use Email::MIME 1.924;
 use Email::Sender::Simple 1.300006 qw(sendmail);
 use Email::Simple::Creator;
 use Email::Simple;
-use File::Basename;
+use Path::Tiny;
 use IO::All;
 use Moo;
 use Try::Tiny;
@@ -57,7 +57,7 @@ sub distribute
 sub _create_message
 {
     my $self = shift;
-    my $base = basename($self->file);
+    my $base = path($self->file)->basename;
 
     my @parts =
     (
@@ -111,7 +111,7 @@ App::Zapzi::Distributors::Email - distribute a published eBook by sending an ema
 
 =head1 VERSION
 
-version 0.014
+version 0.015
 
 =head1 DESCRIPTION
 

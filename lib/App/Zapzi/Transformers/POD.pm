@@ -6,12 +6,10 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.014'; # VERSION
+our $VERSION = '0.015'; # VERSION
 
 use Pod::Html;
-use File::Basename;
-use File::Temp ();
-use File::Slurp;
+use Path::Tiny;
 use Carp;
 use Moo;
 
@@ -37,7 +35,7 @@ sub transform
 {
     my $self = shift;
 
-    my $tempdir = File::Temp->newdir("zapzi-pod-XXXXX", TMPDIR => 1);
+    my $tempdir = Path::Tiny->tempdir("zapzi-pod-XXXXX", TMPDIR => 1);
 
     # pod2html requires files for input and output
     my $infile = "$tempdir/in.pod";
@@ -47,7 +45,7 @@ sub transform
 
     my $outfile = "$tempdir/out.html";
 
-    my $title = basename($self->input->source);
+    my $title = path($self->input->source)->basename;
 
     # --quiet will supress warnings on missing links etc
     pod2html("$infile", "--quiet", "--cachedir=$tempdir",
@@ -55,7 +53,7 @@ sub transform
              "--infile=$infile", "--outfile=$outfile");
     croak('Could not transform POD') unless -s $outfile;
 
-    my $html = read_file($outfile);
+    my $html = path($outfile)->slurp;
 
     return $self->SUPER::transform($html);
 }
@@ -76,7 +74,7 @@ App::Zapzi::Transformers::POD - transform POD to HTML
 
 =head1 VERSION
 
-version 0.014
+version 0.015
 
 =head1 DESCRIPTION
 

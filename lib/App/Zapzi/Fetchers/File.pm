@@ -6,7 +6,7 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.014'; # VERSION
+our $VERSION = '0.015'; # VERSION
 
 use Carp;
 use File::MMagic 1.30;
@@ -54,7 +54,7 @@ sub fetch
     my $content_type;
 
     # Try extension first
-    $content_type = 'text/plain' if $self->source =~ /\.(text|md|mkdn)$/;
+    $content_type = 'text/plain' if $self->source =~ /\.(txt|md|mkdn)$/;
     $content_type = 'text/html' if $self->source =~ /\.(html)$/;
     $content_type = 'text/pod' if $self->source =~ /\.(pm|pl)$/;
 
@@ -83,7 +83,7 @@ App::Zapzi::Fetchers::File - fetch article from a file
 
 =head1 VERSION
 
-version 0.014
+version 0.015
 
 =head1 DESCRIPTION
 

@@ -6,12 +6,12 @@ use utf8;
 use strict;
 use warnings;
 
-our $VERSION = '0.014'; # VERSION
+our $VERSION = '0.015'; # VERSION
 
 use Carp;
 use Moo;
 use App::Zapzi;
-use File::Copy;
+use Path::Tiny;
 
 with 'App::Zapzi::Roles::Distributor';
 
@@ -26,8 +26,8 @@ sub distribute
 {
     my $self = shift;
 
-    my $rc = copy($self->file, $self->destination);
-    if ($rc)
+    eval { path($self->file)->copy($self->destination) };
+    if (! $@)
     {
         $self->_set_completion_message("File copied to '" .
                                        $self->destination .
@@ -57,7 +57,7 @@ App::Zapzi::Distributors::Copy - distribute a published eBook by copying the fil
 
 =head1 VERSION
 
-version 0.014
+version 0.015
 
 =head1 DESCRIPTION
 

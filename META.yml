@@ -12,9 +12,9 @@ build_requires:
   Test::Output: '0'
   perl: '5.010'
 configure_requires:
-  ExtUtils::MakeMaker: '6.30'
+  ExtUtils::MakeMaker: '0'
 dynamic_config: 0
-generated_by: 'Dist::Zilla version 5.013, CPAN::Meta::Converter version 2.133380'
+generated_by: 'Dist::Zilla version 5.020, CPAN::Meta::Converter version 2.140640'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -42,12 +42,8 @@ requires:
   Email::Simple::Creator: '0'
   Encode: '0'
   Exporter: '0'
-  File::Basename: '0'
-  File::Copy: '0'
   File::HomeDir: '0'
   File::MMagic: '1.30'
-  File::Slurp: '0'
-  File::Temp: '0'
   Getopt::Lucid: '1.05'
   HTML::Element: '0'
   HTML::Entities: '0'
@@ -60,6 +56,7 @@ requires:
   Module::Find: '0.11'
   Moo: '1.003000'
   Moo::Role: '0'
+  Path::Tiny: '0'
   Pod::Find: '0'
   Pod::Html: '0'
   SQL::Translator: '0'
@@ -75,4 +72,4 @@ resources:
   bugtracker: https://github.com/rupertl/app-zapzi/issues
   homepage: https://metacpan.org/release/App-Zapzi
   repository: git://github.com/rupertl/app-zapzi.git
-version: '0.014'
+version: '0.015'
